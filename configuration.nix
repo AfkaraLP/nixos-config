@@ -68,7 +68,6 @@
 
   environment = {
     systemPackages = with pkgs; [
-      wezterm
       killall
     ]; # systemPackages 
     variables = {
