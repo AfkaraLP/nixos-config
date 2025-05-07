@@ -140,6 +140,13 @@
   programs = {
     home-manager.enable = true;
 
+    zsh = {
+      oh-my-zsh = {
+        enable = true;
+	plugins = [ "git" ];
+	theme = "agnoster";
+      };
+    };
     zoxide = {
       enable = true;
       enableZshIntegration = true;
