@@ -13,79 +13,81 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "nixos"; # Define your hostname.
-
-  networking.networkmanager.enable = true;
+  networking = {
+    hostName = "nixos"; # Define your hostname.
+    networkmanager.enable = true;
+  }; # networking 
 
   time.timeZone = "America/New_York";
 
   i18n.defaultLocale = "en_US.UTF-8";
-
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "workman";
-  };
 
   users.users.afkara = {
     isNormalUser = true;
     description = "afkara";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [];
-  };
+  }; # users.users.afkara 
+
 
   services = { 
+    xserver = { 
+      xkb = {
+        layout = "us";
+        variant = "workman";
+      }; # xkb
+
+      videoDrivers = [ "nvidia" ];
+    }; # xserver
+     
     getty.autologinUser = "afkara"; 
-    pipewire.wireplumber = {
+    greetd = {
       enable = true;
-    };
-  };
+      settings = {
+        default_session = {
+	  command = "Hyprland";
+	}; # default_session 
+      }; # settings 
+    }; # greetd 
+
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+    }; # pipewire
+
+  }; # services
 
   nixpkgs.config.allowUnfree = true;
 
-  environment.systemPackages = with pkgs; [
-    wezterm
-  ];
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.11"; # Did you read the comment?
   
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   environment = {
+    systemPackages = with pkgs; [
+      wezterm
+    ]; # systemPackages 
     variables = {
       NIXOS_OZONE_WL = "1";
-      # GBM_BACKEND = "nvidia-drm";
-      # __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-      # XDG_SESSIONS_TYPE = "wayland";
-    };
-  };
-
-  # xdg.portal = {
-    # enable = true;
-    # wlr.enable = true;
-    # xdgOpenUsePortal = true;
-    # extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-  # };
-
-  services.xserver.videoDrivers = [ "nvidia" ];
+      GBM_BACKEND = "nvidia-drm";
+      __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    }; # variables 
+  }; # environment 
 
   hardware = {
-    nvidia = { 
+    nvidia = {
       open = true;
       modesetting.enable = true;
       package = config.boot.kernelPackages.nvidiaPackages.latest;
-    };
+    }; # nvidia
     
     graphics = {
       enable = true;
       extraPackages = with pkgs; [ nvidia-vaapi-driver ];
-    };
+    }; # graphics 
 
     pulseaudio.support32Bit = true;
-  };
+  }; # hardware 
 }

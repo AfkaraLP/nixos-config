@@ -7,13 +7,13 @@
     home-manager = {
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
+    }; # home-manager 
 
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
+    }; # nixvim 
+  }; # inputs 
 
   outputs = { self, nixpkgs, home-manager, nixvim, ... }@inputs: {
     
@@ -34,12 +34,12 @@
 
 	    home-manager.users.afkara = import ./home.nix;
 	  }
-        ];
+        ]; # modules 
 
 	
-      };
+      }; # nixpkgs.lib.nixosSystem 
 
-    };
+    }; # nixosConfigurations 
 
-  };
+  }; # outputs 
 }

@@ -23,7 +23,7 @@
 	kb_variant = "workman";
 	follow_mouse = 1;
 	sensitivity = 0;
-      };
+      }; # input 
 
       bind = [
         "$mod, Q, killactive"
@@ -41,19 +41,19 @@
 	"$mod, J, movefocus, d"
 	"$mod, K, movefocus, u"
 
-      ];
+      ]; # bind 
 
       bindm = [
 	"$mod, mouse:272, movewindow"
 	"$mod, mouse:273, resizewindow"
-      ];
+      ]; # bindm 
 
       exec-once = "$terminal & $browser & $discord";
 
       monitor = [
         " DP-3, 1920x1080@60, 0x0, 1" 
 	" HDMI-A-1, 1920x1080@60, 1920x0, 1"
-      ];
+      ]; # monitor 
       # ecosystem = {
         # enforce_permissions = 1;
       # };
@@ -66,12 +66,12 @@
 	"col.inactive_border" = "rgba(595959aa)";
 	allow_tearing = false;
 	layout = "dwindle";
-      };
+      }; # general 
 
       windowrule = [
         "suppressevent maximize, class:.*"
 	"nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
-      ];
+      ]; # windowrule 
 
       decoration = {
         rounding = 10;
@@ -80,16 +80,16 @@
 	  range = 4;
 	  render_power = 3;
 	  color = "rgba(1a1a1aee)";
-	};
+	}; # shadow 
 
 	blur = {
 	  enabled = true;
 	  size = 5;
 	  passes = 2;
           vibrancy = 0.1696;
-	};
+	}; # blur 
 
-      };
+      }; # decoration 
 
       animations = {
         enabled = "yes, please :)";
@@ -98,7 +98,7 @@
 	           "linear,0,0,1,1"
 	           "almostLinear,0.5,0.5,0.75,1.0"
 	           "quick,0.15,0,0.1,1" 
-	         ];
+	         ]; # bezier 
     
         animation = [ "global, 1, 10, default"
 		      "border, 1, 5.39, easeOutQuint"
@@ -116,24 +116,24 @@
 		      "workspaces, 1, 1.94, almostLinear, fade"
 		      "workspacesIn, 1, 1.21, almostLinear, fade"
 		      "workspacesOut, 1, 1.94, almostLinear, fade" 
-		    ];
-      };
+		    ]; # animation
+      }; # animations 
 
       dwindle = {
         pseudotile = true;
 	preserve_split = true;
-      };
+      }; # dwindle 
       
       master = {
         new_status = "master";
-      };
-    };
-  };
+      }; # master 
+    }; # settings 
+  }; # wayland.windowManager.hyprland 
 
   nixpkgs.config = {
     allowUnfree = true;
     allowUnfreePredicate = (_: true);
-  };
+  }; # nixpkgs.config 
 
   home.stateVersion = "24.11";
   programs.home-manager.enable = true;
