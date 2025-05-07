@@ -21,11 +21,6 @@
       enable = true;
     }; # yazi 
 
-    zsh = {
-      enable = true;
-      # enableCompletions = true;
-      syntaxHighlighting.enable = true;
-    }; # zsh 
   }; # programs 
 
 }
