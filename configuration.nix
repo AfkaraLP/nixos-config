@@ -68,6 +68,7 @@
   environment = {
     systemPackages = with pkgs; [
       wezterm
+      killall
     ]; # systemPackages 
     variables = {
       NIXOS_OZONE_WL = "1";
