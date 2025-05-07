@@ -140,7 +140,10 @@
   programs = {
     home-manager.enable = true;
 
-    zoxide.enable = true;
+    zoxide = {
+      enable = true;
+      enableZshIntegration = true;
+    };
 
     wezterm = {
       enable = true;
