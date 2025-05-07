@@ -6,6 +6,7 @@
 
   home.packages = with pkgs; [
     vesktop
+    bat
   ];
   
   wayland.windowManager.hyprland = {
@@ -138,6 +139,8 @@
   home.stateVersion = "24.11";
   programs = {
     home-manager.enable = true;
+
+    zoxide.enable = true;
 
     wezterm = {
       enable = true;
