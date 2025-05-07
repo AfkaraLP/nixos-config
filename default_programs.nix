@@ -23,9 +23,9 @@
 
     zsh = {
       enable = true;
-      enableCompletions = true;
-      syntaxHighlightin.enable = true;
-    };
+      # enableCompletions = true;
+      syntaxHighlighting.enable = true;
+    }; # zsh 
   }; # programs 
 
 }
