@@ -91,4 +91,11 @@
 
     pulseaudio.support32Bit = true;
   }; # hardware 
+
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
+    configPackages = [ pkgs.hyprland ];
+  };
+
 }
