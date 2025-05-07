@@ -33,7 +33,12 @@
     packages = with pkgs; [];
   };
 
-  services.getty.autologinUser = "afkara";
+  services = { 
+    getty.autologinUser = "afkara"; 
+    pipewire.wireplumber = {
+      enable = true;
+    };
+  };
 
   nixpkgs.config.allowUnfree = true;
 
