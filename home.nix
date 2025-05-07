@@ -62,7 +62,7 @@
         gaps_in = 5;
 	gaps_out = 10;
 	border_size = 2;
-	"col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
+	"col.active_border" = "rgba(00fffcee) rgba(00d0ffdd) 135deg";
 	"col.inactive_border" = "rgba(595959aa)";
 	allow_tearing = false;
 	layout = "dwindle";
