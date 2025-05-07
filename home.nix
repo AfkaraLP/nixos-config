@@ -143,10 +143,23 @@
       enable = true;
       enableZshIntegration = true;
       extraConfig = ''
-        font_size = 16.0,
-	color_scheme = "tokyonight",
-	hide_tab_bar_if_only_one_tab = true
+        local config = wezterm.config_builder()
+        
+        config.font_size = 16.0,
+	config.hide_tab_bar_if_only_one_tab = true,
+	config.window_background_opacity = 0.0,
+	config.window_close_confirmation = "NeverPrompt",
+	config.window_padding = { 
+	  left = 2, 
+	  top = 2, 
+	  bottom = 2, 
+	  right = 2,
+	}
+	config.window_decorations = "RESIZE",
+
+	return config
       '';
+      
     };
   };
 }
