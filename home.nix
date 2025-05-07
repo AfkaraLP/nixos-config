@@ -136,5 +136,17 @@
   }; # nixpkgs.config 
 
   home.stateVersion = "24.11";
-  programs.home-manager.enable = true;
+  programs = {
+    home-manager.enable = true;
+
+    wezterm = {
+      enable = true;
+      enableZshIntegration = true;
+      extraConfig = ''
+        font_size = 16.0,
+	color_scheme = "tokyonight",
+	hide_tab_bar_if_only_one_tab = true
+      '';
+    };
+  };
 }
