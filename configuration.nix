@@ -13,10 +13,23 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  ### Boot
   systemd.services = {
     systemd-udev-settle.enable = false; # if all shit fails enable that again
     NetworkManager-wait-online.enable = false;
-  };
+    "systemd-timesyncd".enable = false;
+    nscd.serviceConfig.TimeoutStopSec = "3s";
+    "NetworkManager-wait-online".serviceConfig.TimeoutStopSec = "5s";
+    # "systemd-timesyncd".wantedBy = lib.mkForce [ ];
+  }; # systemd.services 
+  services = {
+    ntp.enable = false;
+    chrony.enable = true;
+  }; # services 
+  systemd.extraConfig = ''
+    DefaultTimeoutStopSec=10s
+  '';
+  ### Boot
 
   networking = {
     hostName = "nixos"; # Define your hostname.
