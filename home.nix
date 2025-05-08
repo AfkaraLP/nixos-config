@@ -70,10 +70,21 @@
 	layout = "dwindle";
       }; # general 
 
+      env = [
+        "XCURSOR_SIZE,24"
+	"HYPRCURSOR_SIZE,24"
+      ]; # env 
+
       windowrule = [
         "suppressevent maximize, class:.*"
 	"nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
       ]; # windowrule 
+
+      windowrulev2 = [
+        # "decoration:0;class:.*" #
+	"noblur, class:firefox"
+	"decorate off, class:.*"
+      ]; # windowrulev2 
 
       decoration = {
         rounding = 10;
@@ -92,6 +103,11 @@
 	}; # blur 
 
       }; # decoration 
+
+      misc = {
+        force_default_wallpaper = 0;
+	disable_hyprland_logo = true;
+      }; # misc 
 
       animations = {
         enabled = "yes, please :)";
