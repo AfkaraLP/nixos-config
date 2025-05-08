@@ -36,6 +36,7 @@
         "$mod, R, exec, $menu"
         "$mod, P, pseudo, # dwindle"
         "$mod, S, togglesplit, # dwindle"
+        "$mod, D, exec, $discord"
 
         "$mod, H, movefocus, l"
 	"$mod, L, movefocus, r"
@@ -63,8 +64,8 @@
         gaps_in = 5;
 	gaps_out = 10;
 	border_size = 2;
-	"col.active_border" = "rgba(00fffcee) rgba(00d0ffdd) 135deg";
-	"col.inactive_border" = "rgba(595959aa)";
+	"col.active_border" = "rgba(ff0000cc) rgba(ffa500cc) rgba(ffff00cc) rgba(00ff00cc) rgba(0000ffcc) rgba(4b0082cc) rgba(ee82eecc) 135deg";
+        "col.inactive_border" = "rgba(33333388)";
 	allow_tearing = false;
 	layout = "dwindle";
       }; # general 
@@ -146,13 +147,13 @@
         enable = true;
 	plugins = [ "git" ];
 	theme = "agnoster";
-      };
-    };
+      }; # oh-my-zsh 
+    }; # zsh 
 
     zoxide = {
       enable = true;
       enableZshIntegration = true;
-    };
+    }; # zoxide 
 
     wezterm = {
       enable = true;
@@ -165,18 +166,18 @@
 	config.hide_tab_bar_if_only_one_tab = true
 	config.window_background_opacity = 0.5
 	config.window_close_confirmation = "NeverPrompt"
-	config.window_padding = { 
+	config.window_padding = {
 	  left = 2, 
 	  top = 2, 
 	  bottom = 2, 
 	  right = 2,
-	}
+	} 
 	config.window_decorations = "RESIZE"
 	config.window_frame = { inactive_titlebar_bg = "#000000", }
 
 	return config
       '';
       
-    };
-  };
+    }; # wezterm 
+  }; # programs 
 }
