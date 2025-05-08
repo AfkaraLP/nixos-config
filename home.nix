@@ -5,6 +5,7 @@
   home.homeDirectory = "/home/afkara";
 
   home.packages = with pkgs; [
+    swww
     vesktop
     bat
   ];
@@ -154,6 +155,7 @@
   }; # nixpkgs.config 
 
   home.stateVersion = "24.11";
+
   programs = {
     home-manager.enable = true;
 
