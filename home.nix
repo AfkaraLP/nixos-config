@@ -1,5 +1,13 @@
 { config, pkgs, lib,... }:
-
+let
+  wallpaperConfig = {
+    default = {
+      path = "/home/afkara/wallpapers";
+      duration = "10m";
+      sorting = "random";
+    };
+  };
+in
 {
   home.username = "afkara";
   home.homeDirectory = "/home/afkara";
@@ -9,9 +17,7 @@
     bat
   ]; # home.packages 
 
-  xdg.configFile."wpaperd/wallpaper.toml".text = ''
-    [default]
-  '';
+  xdg.configFile."wpaperd/wallpaper.toml".source = (pkgs.formats.toml { }).generate "wallpaper_config_afkara" wallpaperConfig;
 
   services = {
     wpaperd = {
