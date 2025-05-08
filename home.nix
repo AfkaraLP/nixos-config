@@ -63,6 +63,11 @@
 
       exec-once = "$terminal & $browser & $discord";
 
+      exec = [
+        "gsettings set org.gnome.desktop.interface color-scheme \"prefer-dark\""
+        "gsettings set org.gnome.desktop.interface gtk-theme \"adw-gtk3\""
+      ];
+
       monitor = [
         " DP-3, 1920x1080@60, 0x0, 1" 
 	" HDMI-A-1, 1920x1080@60, 1920x0, 1"
@@ -84,6 +89,7 @@
       env = [
         "XCURSOR_SIZE,24"
 	"HYPRCURSOR_SIZE,24"
+	"QT_QPA_PLATFORMTHEME,qt6ct"
       ]; # env 
 
       windowrule = [
