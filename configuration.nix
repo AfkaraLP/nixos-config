@@ -76,6 +76,7 @@
       pulse.enable = true;
     }; # pipewire
 
+    pulseaudio.support32Bit = true;
   }; # services
 
   nixpkgs.config.allowUnfree = true;
@@ -107,7 +108,6 @@
       extraPackages = with pkgs; [ nvidia-vaapi-driver ];
     }; # graphics 
 
-    pulseaudio.support32Bit = true;
   }; # hardware 
 
   xdg.portal = {
