@@ -116,4 +116,7 @@
     configPackages = [ pkgs.hyprland ];
   };
 
+  home-manager.users.afkara = {
+    home.file.".config".backupFileExtension = "backup";
+  };
 }
