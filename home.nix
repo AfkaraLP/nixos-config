@@ -5,10 +5,20 @@
   home.homeDirectory = "/home/afkara";
 
   home.packages = with pkgs; [
-    swww
     vesktop
     bat
-  ];
+  ]; # home.packages 
+
+  xdg.configFile."wpaperd/wallpaper.toml".text = ''
+    [default]
+  '';
+
+  services = {
+    wpaperd = {
+      enable = true;
+      settings = {};
+    };
+  };
   
   wayland.windowManager.hyprland = {
     enable = true;
