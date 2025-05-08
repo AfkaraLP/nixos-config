@@ -11,6 +11,7 @@
       "$terminal" = "wezterm";
       "$discord" = "vesktop";
       "$filemanager" = "yazi";
+      "$wallpaper_manager" = "wpaperd";
 
       input = {
         kb_layout = "us";
@@ -43,7 +44,7 @@
         "$mod, mouse:273, resizewindow"
       ]; # bindm
 
-      exec-once = "$terminal & $browser & $discord";
+      exec-once = "$terminal & $browser & $discord & $wallpaper_manager";
 
       exec = [
         "gsettings set org.gnome.desktop.interface color-scheme \"prefer-dark\""
