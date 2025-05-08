@@ -13,6 +13,11 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  systemd.services = {
+    systemd-udev-settle.enable = false; # if all shit fails enable that again
+    NetworkManager-wait-online.enable = false;
+  };
+
   networking = {
     hostName = "nixos"; # Define your hostname.
     networkmanager.enable = true;
