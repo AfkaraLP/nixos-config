@@ -30,11 +30,6 @@ in
     };
   };
   
-  nixpkgs.config = {
-    allowUnfree = true;
-    allowUnfreePredicate = (_: true);
-  }; # nixpkgs.config 
-
   home.stateVersion = "24.11";
 
   programs = {
