@@ -21,10 +21,10 @@
 	DisableTelemetry = true;
 	DisableSetDesktopBackground = true;
 	EnableTrackingProtection = {
-	  Value = true;
+	  # Value = true;
 	  Cryptomining = true;
-	  Fingerprinting = true;
-	  EmailTracking = true;
+	  # Fingerprinting = true;
+	  # EmailTracking = true;
 	}; # EnableTrackingProtection 
 	TranslateEnabled = false;
 	DontCheckDefaultBrowser = true;

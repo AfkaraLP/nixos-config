@@ -102,6 +102,10 @@
       modesetting.enable = true;
       package = config.boot.kernelPackages.nvidiaPackages.latest;
     }; # nvidia
+    bluetooth = {
+      enable = true;
+      powerOnBoot = false;
+    }; # bluetooth 
     
     graphics = {
       enable = true;
