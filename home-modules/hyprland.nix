@@ -79,6 +79,7 @@
         "HYPRCURSOR_SIZE,12"
         "QT_QPA_PLATFORMTHEME,qt6ct"
 	"ELECTRON_OZONE_PLATFORM_HINT,auto"
+	"NVD_BACKEND,direct"
       ]; # env
 
       windowrule = [
