@@ -22,6 +22,7 @@ in
   imports = [
     ./home-modules/hyprland.nix
     ./home-modules/terminal.nix
+    ./home-modules/waybar.nix
   ]; # imports 
 
   home.packages = with pkgs; [
