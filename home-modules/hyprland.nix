@@ -12,6 +12,8 @@
       "$discord" = "vesktop";
       "$filemanager" = "yazi";
       "$wallpaper_manager" = "wpaperd";
+      "$main_monitor" = "desc:Microstep MSI";
+      "$second_monitor" = "desc:HKC OVERSEAS LIMITED S01";
 
       input = {
         kb_layout = "us";
@@ -52,8 +54,8 @@
       ];
 
       monitor = [
-        " DP-3, 1920x1080@60, 0x0, 1"
-        " HDMI-A-1, 1920x1080@60, 1920x0, 1"
+        " $main_monitor, 1920x1080@60, 0x0, 1"
+        " $second_monitor, 1920x1080@60, 1920x0, 1"
       ]; # monitor
       # ecosystem = {
         # enforce_permissions = 1;
