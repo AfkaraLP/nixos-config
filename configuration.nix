@@ -120,6 +120,7 @@
       open = true;
       modesetting.enable = true;
       package = config.boot.kernelPackages.nvidiaPackages.latest;
+      nvidiaSettings = true;
     }; # nvidia
         
     graphics = {
