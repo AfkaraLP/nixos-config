@@ -25,6 +25,7 @@
   services = {
     ntp.enable = false;
     chrony.enable = true;
+    blueman.enable = true;
   }; # services 
   systemd.extraConfig = ''
     DefaultTimeoutStopSec=10s
