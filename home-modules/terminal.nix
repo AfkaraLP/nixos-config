@@ -34,7 +34,7 @@
             bottom = 2,
             right = 2,
           }
-          config.window_decorations = "RESIZE"
+          config.window_decorations = "NONE"
           config.window_frame = { inactive_titlebar_bg = "#000000", }
  
           return config
