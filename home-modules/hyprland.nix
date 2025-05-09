@@ -73,9 +73,12 @@
       }; # general
 
       env = [
-        "XCURSOR_SIZE,24"
-        "HYPRCURSOR_SIZE,24"
+        "LIBVA_DRIVER_NAME,nvidia"
+	"__GLX_VENDOR_LIBRARY_NAME,nvidia"
+        "XCURSOR_SIZE,12"
+        "HYPRCURSOR_SIZE,12"
         "QT_QPA_PLATFORMTHEME,qt6ct"
+	"ELECTRON_OZONE_PLATFORM_HINT,auto"
       ]; # env
 
       windowrule = [
