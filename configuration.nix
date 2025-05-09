@@ -14,11 +14,11 @@
     loader = {
       systemd-boot.configurationLimit = 3;
       systemd-boot.enable = true;
-      ef.canTouchEfiVariables = true;
+      efi.canTouchEfiVariables = true;
     }; # loader 
 
     initrd = {
-      compression = "zstd";
+      compressor = "zstd";
       availableKernelModules = [ "nvme" "ext4" ];
     }; # initrd 
   }; # boot 
@@ -36,14 +36,13 @@
   services = {
     ntp.enable = false;
     chrony.enable = true;
-    cups.enable = false;
 
-    journald.settings = {
-      Storage = "volatile";
-      SystemMaxUse = "50M";
-      RuntimeMaxUse = "20M";
-      MaxRetentionSec = "1week";
-    }; # journald.settings 
+    # journald.settings = {
+    #   Storage = "volatile";
+    #   SystemMaxUse = "50M";
+    #   RuntimeMaxUse = "20M";
+    #   MaxRetentionSec = "1week";
+    # }; # journald.settings 
   }; # services 
   systemd.extraConfig = ''
     DefaultTimeoutStopSec=10s
@@ -53,6 +52,7 @@
   networking = {
     hostName = "nixos"; # Define your hostname.
     networkmanager.enable = true;
+    dhcpcd.wait = "background";
   }; # networking 
 
   time.timeZone = "America/New_York";
