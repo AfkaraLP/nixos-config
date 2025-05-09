@@ -10,27 +10,45 @@
       ./hardware-configuration.nix
     ];
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot = {
+    loader = {
+      systemd-boot.configurationLimit = 3;
+      systemd-boot.enable = true;
+      ef.canTouchEfiVariables = true;
+    }; # loader 
 
-  ### Boot
+    initrd = {
+      compression = "zstd";
+      availableKernelModules = [ "nvme" "ext4" ];
+    }; # initrd 
+  }; # boot 
+
+  ### BOOT
   systemd.services = {
     systemd-udev-settle.enable = false; # if all shit fails enable that again
     NetworkManager-wait-online.enable = false;
     "systemd-timesyncd".enable = false;
     nscd.serviceConfig.TimeoutStopSec = "3s";
     "NetworkManager-wait-online".serviceConfig.TimeoutStopSec = "5s";
+    nscd.enable = false;
     # "systemd-timesyncd".wantedBy = lib.mkForce [ ];
   }; # systemd.services 
   services = {
     ntp.enable = false;
     chrony.enable = true;
-    blueman.enable = true;
+    cups.enable = false;
+
+    journald.settings = {
+      Storage = "volatile";
+      SystemMaxUse = "50M";
+      RuntimeMaxUse = "20M";
+      MaxRetentionSec = "1week";
+    }; # journald.settings 
   }; # services 
   systemd.extraConfig = ''
     DefaultTimeoutStopSec=10s
   '';
-  ### Boot
+  ### BOOT
 
   networking = {
     hostName = "nixos"; # Define your hostname.
@@ -119,6 +137,8 @@
     enable = true;
     extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
     configPackages = [ pkgs.hyprland ];
-  };
+  }; # xdg.portal 
 
-}
+  nix.gc.automatic = true;
+  nix.gc.options = "--delete-older-than 3d";
+} # END
