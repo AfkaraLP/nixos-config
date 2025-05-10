@@ -58,7 +58,6 @@
 	    html.enable = true;
 	    jedi_language_server.enable = true;
 	    yamlls.enable = true;
-	    vuels.enable = true;
 	    quick_lint_js.enable = true;
 	    bashls.enable = true;
 	  }; # servers 
