@@ -24,6 +24,7 @@ in
     bat
     sway-contrib.grimshot
     wl-clipboard
+    bottom
   ]; # home.packages 
 
   xdg.configFile."wpaperd/wallpaper.toml".source = (pkgs.formats.toml { }).generate "wallpaper_config_afkara" wallpaperConfig;
