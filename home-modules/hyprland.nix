@@ -82,16 +82,18 @@
 	"NVD_BACKEND,direct"
       ]; # env
 
-      windowrule = [
-        "suppressevent maximize, class:.*"
-        "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
-      ]; # windowrule
-
       windowrulev2 = [
         # "decoration:0;class:.*" #
         "noblur, class:firefox"
         "decorate off, class:.*"
+        "suppressevent maximize, class:.*"
+        "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
       ]; # windowrulev2
+
+      layerrule = [
+        "blur, waybar"
+        "ignorealpha 0.01, waybar"
+      ];
 
       decoration = {
         rounding = 10;

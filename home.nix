@@ -28,10 +28,10 @@ in
   home.packages = with pkgs; [
     vesktop
     bat
+    sway-contrib.grimshot
   ]; # home.packages 
 
   xdg.configFile."wpaperd/wallpaper.toml".source = (pkgs.formats.toml { }).generate "wallpaper_config_afkara" wallpaperConfig;
-
   services = {
     wpaperd = {
       enable = true;

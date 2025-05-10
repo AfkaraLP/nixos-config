@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports =
@@ -55,7 +55,7 @@
     dhcpcd.wait = "background";
   }; # networking 
 
-  time.timeZone = "America/New_York";
+  time.timeZone = "Europe/Berlin";
 
   i18n.defaultLocale = "en_US.UTF-8";
 
