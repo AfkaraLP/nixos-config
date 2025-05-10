@@ -15,6 +15,7 @@
       "$wallpaper_manager" = "wpaperd";
       "$main_monitor" = "desc:Microstep MSI";
       "$second_monitor" = "desc:HKC OVERSEAS LIMITED S01";
+      "$waybar" = "waybar";
 
       input = {
         kb_layout = "us";
@@ -47,7 +48,7 @@
         "$mod, mouse:273, resizewindow"
       ]; # bindm
 
-      exec-once = "$terminal & $browser & $discord & $wallpaper_manager";
+      exec-once = "$terminal & $browser & $discord & $wallpaper_manager & $waybar";
 
       exec = [
         "gsettings set org.gnome.desktop.interface color-scheme \"prefer-dark\""
@@ -106,7 +107,7 @@
 
         blur = {
           enabled = true;
-          size = 5;
+          size = 10;
           passes = 2;
           vibrancy = 0.1696;
         }; # blur
