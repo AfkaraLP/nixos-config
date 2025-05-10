@@ -13,9 +13,14 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     }; # nixvim 
+    
+    nixcord = {
+      url = "github:kaylorben/nixcord";
+      inputs.nixpkgs.follows = "nixpkgs";
+    }; # nixcord 
   }; # inputs 
 
-  outputs = { self, nixpkgs, home-manager, nixvim, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, nixvim, nixcord, ... }@inputs: {
     
     nixosConfigurations = {
 
@@ -33,6 +38,10 @@
 	    home-manager.backupFileExtension = "backup";
 
 	    home-manager.users.afkara = import ./home.nix;
+
+	    home-manager.sharedModules = [
+	      nixcord.homeModules.nixcord
+	    ];
 	  }
         ]; # modules 
 

@@ -7,13 +7,6 @@ let
       sorting = "random";
     }; # default 
   }; # wallpaperConfig 
-
-  nixvim = import (
-    builtins.fetchGit {
-      url = "https://github.com/nix-community/nixvim";
-      ref = "nixos-unstable";
-    }
-  );
 in
 {
   home.username = "afkara";
@@ -23,6 +16,7 @@ in
     ./home-modules/hyprland.nix
     ./home-modules/terminal.nix
     ./home-modules/waybar.nix
+    ./home-modules/nixcord.nix
     ./home-modules/assets/fonts.nix
   ]; # imports 
 
