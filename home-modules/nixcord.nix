@@ -45,23 +45,23 @@
 	  enable = true;
 	  regexRules = [
 	    {
-              find = "/https:\\/\\/x\\.com\\/([^\\/]+\\/status\\/[0-9]+)/";
-              replace = "https://fixvx.com/$1";
+              find = "/^https:\\/\\/x\\";
+              replace = "https://fixvx";
               onlyIfIncludes = "";
             }
 	    {
-	      find = "/https?:\\/\\/(?:www\\.)?reddit\\.com\\/(r\\/[^\\/?]+\\/comments\\/[^\\/?]+\\/[^\\/?]+)\\/?(?:\\?[^\\s]*)?/";
-	      replace = "https://www.rxddit.com/$1/";
+	      find = "/^https?:\\/\\/(?:www\\.)?reddit";
+	      replace = "https://www.rxddit";
 	      onlyIfIncludes = "";
 	    }
 	    {
-	      find = "/https?:\\/\\/(?:www\\.)?instagram\\.com\\/(p\\/[^\\/?]+)\\/?(?:\\?[^\\s]*)?/";
-	      replace = "https://www.ddinstagram.com/$1/";
+	      find = "/^https?:\\/\\/(?:www\\.)?instagram";
+	      replace = "https://www.ddinstagram";
 	      onlyIfIncludes = "";
 	    }
 	    {
-	      find = "/https?:\\/\\/(?:www\\.)tiktok\\.com\\/([@A-Za-z0-9\\/]+).*/gm";
-	      replace = "https://www.vxtiktok.com/$1/";
+	      find = "https?:\\/\\/(www)?\\.tiktok";  
+	      replace = "https://www.vxtiktok";
 	      onlyIfIncludes = "";
 	    }
 	  ]; # regexRules 
