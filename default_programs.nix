@@ -49,11 +49,14 @@
 	snacks.enable = true;
 	fzf-lua.enable = true;
 	which-key.enable = true;
-	mini.enable = true;
+	mini {
+	  enable = true;
+	  icons = true;
+	  mockDevIcons = true;
+	}; # mini 
 	oil.enable = true;
 	blink-cmp.enable = true;
 	lazydev.enable = true;
-	lspconfig.enable = true;
 	bufferline.enable = true;
 	noice.enable = true;
 	trouble.enable = true;
