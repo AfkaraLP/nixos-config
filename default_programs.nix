@@ -49,10 +49,9 @@
 	snacks.enable = true;
 	fzf-lua.enable = true;
 	which-key.enable = true;
-	mini {
+	mini = {
 	  enable = true;
-	  icons = true;
-	  mockDevIcons = true;
+	  # mockDevIcons = true;
 	}; # mini 
 	oil.enable = true;
 	blink-cmp.enable = true;
