@@ -29,6 +29,7 @@ in
     vesktop
     bat
     sway-contrib.grimshot
+    wl-clipboard
   ]; # home.packages 
 
   xdg.configFile."wpaperd/wallpaper.toml".source = (pkgs.formats.toml { }).generate "wallpaper_config_afkara" wallpaperConfig;

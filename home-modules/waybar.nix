@@ -23,10 +23,13 @@
 	};
 
 	"custom/dadJoke" = {
-          format = "my dad once said: {}";
+          format = "My Dad Once Said: {}";
           interval = 10;
+	  max-length = 110;
           exec = pkgs.writeShellScript "dadJoke" ''
-            curl -H "Accept: text/plain" https://icanhazdadjoke.com/
+            joke=$(curl -H "Accept: text/plain" https://icanhazdadjoke.com/)
+	    echo "$joke" > ./tmp/waybar-dadjoke.txt
+	    echo "$joke"
           '';
         }; # "custom/dadJoke" 
       }; # mainBar 
