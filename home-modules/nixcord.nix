@@ -64,6 +64,16 @@
 	      replace = "https://www.vxtiktok";
 	      onlyIfIncludes = "";
 	    }
+	    {
+	      find = "?is_from_webapp.*";
+	      replace = "";
+	      onlyIfIncludes = "";
+	    }
+	    {
+	      find = "?utm_source.*";
+	      replace = "";
+	      onlyIfIncludes = "";
+	    }
 	  ]; # regexRules 
 	}; # textReplace 
 	typingTweaks.enable = true;
