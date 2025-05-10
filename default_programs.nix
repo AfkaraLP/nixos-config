@@ -47,11 +47,16 @@
 	telescope.enable = true;
 	lualine.enable = true;
 	snacks.enable = true;
+	fzf-lua.enable = true;
+	which-key.enable = true;
+	mini.enable = true;
+	oil.enable = true;
 	lsp = {
 	  enable = true;
 
 	  servers = {
 	    rust_analyzer.enable = true;
+	    rust_analyzer.installCargo = true;
 	    nixd.enable = true;
 	    jsonls.enable = true;
 	    tailwindcss.enable = true;
