@@ -18,6 +18,7 @@ in
     ./home-modules/waybar.nix
     ./home-modules/nixcord.nix
     ./home-modules/assets/fonts.nix
+    ./home-modules/wofi.nix
   ]; # imports 
 
   home.packages = with pkgs; [
