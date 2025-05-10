@@ -61,13 +61,7 @@
 
 
   services = { 
-    preload = {
-      enable = true;
-      config = {
-        memory-limit = "10%";
-	scan-period = "15s";
-      }; # config 
-    }; # preload 
+    preload.enable = true;
     xserver = { 
       xkb = {
         layout = "us";
