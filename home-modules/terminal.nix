@@ -4,12 +4,15 @@
   programs = {
     zsh = {
       enable = true;
-        oh-my-zsh = {
-          enable = true;
-          plugins = [ "git" ];
-          theme = "agnoster";
-        }; # oh-my-zsh
-      }; # zsh
+      shellAliases = {
+        nrs = "sudo nixos-rebuild switch";
+      };
+      oh-my-zsh = {
+	enable = true;
+	plugins = [ "git" ];
+	theme = "agnoster";
+      }; # oh-my-zsh
+    }; # zsh
  
       zoxide = {
         enable = true;

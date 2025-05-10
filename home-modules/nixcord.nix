@@ -60,17 +60,17 @@
 	      onlyIfIncludes = "";
 	    }
 	    {
-	      find = "https?:\\/\\/(www)?\\.tiktok";  
+	      find = "/^https?:\\/\\/(www)?\\.tiktok";  
 	      replace = "https://www.vxtiktok";
 	      onlyIfIncludes = "";
 	    }
 	    {
-	      find = "?is_from_webapp.*";
+	      find = "/?is_from_webapp.*";
 	      replace = "";
 	      onlyIfIncludes = "";
 	    }
 	    {
-	      find = "?utm_source.*";
+	      find = "/?utm_source.*";
 	      replace = "";
 	      onlyIfIncludes = "";
 	    }
