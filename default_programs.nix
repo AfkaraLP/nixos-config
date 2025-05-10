@@ -51,12 +51,23 @@
 	which-key.enable = true;
 	mini.enable = true;
 	oil.enable = true;
+	blink-cmp.enable = true;
+	lazydev.enable = true;
+	lspconfig.enable = true;
+	bufferline.enable = true;
+	noice.enable = true;
+	trouble.enable = true;
+	conform.enable = true;
+
 	lsp = {
 	  enable = true;
 
 	  servers = {
-	    rust_analyzer.enable = true;
-	    rust_analyzer.installCargo = true;
+	    rust_analyzer = {
+	      enable = true;
+	      installCargo = true;
+	      installRustc = true;
+	    };
 	    nixd.enable = true;
 	    jsonls.enable = true;
 	    tailwindcss.enable = true;
