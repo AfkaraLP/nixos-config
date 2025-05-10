@@ -36,13 +36,6 @@
   services = {
     ntp.enable = false;
     chrony.enable = true;
-
-    # journald.settings = {
-    #   Storage = "volatile";
-    #   SystemMaxUse = "50M";
-    #   RuntimeMaxUse = "20M";
-    #   MaxRetentionSec = "1week";
-    # }; # journald.settings 
   }; # services 
   systemd.extraConfig = ''
     DefaultTimeoutStopSec=10s
@@ -68,6 +61,13 @@
 
 
   services = { 
+    preload = {
+      enable = true;
+      config = {
+        memory-limit = "10%";
+	scan-period = "15s";
+      }; # config 
+    }; # preload 
     xserver = { 
       xkb = {
         layout = "us";
