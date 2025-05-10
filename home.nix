@@ -21,7 +21,6 @@ in
   ]; # imports 
 
   home.packages = with pkgs; [
-    vesktop
     bat
     sway-contrib.grimshot
     wl-clipboard
