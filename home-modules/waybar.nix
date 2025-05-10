@@ -8,11 +8,11 @@
         layer = "top";
 	position = "top";
 	height = 35;
-	margin = "10 10 0 10";
+	margin = "10 5 0 5";
 
-	modules-left = [ "cpu#left" "memory#right" ];
-	modules-center = [ "custom/dadJoke#alone" ];
-	modules-right = [ "wireplumber#left" "clock#right" ];
+	modules-left = [ "cpu" "memory" ];
+	modules-center = [ "custom/dadJoke" ];
+	modules-right = [ "wireplumber" "clock" ];
 
 	"cpu" = {
 	  format = "CPU: {}";
@@ -37,33 +37,24 @@
 	  color: #FFF;
 	  margin: 0px;
 	  padding: 0px;
-	  overflow: hidden;
-	  height: 30px;
-	  box-sizing: border-box;
 	}
-
-	*:before, *:after {
-	  margin: 0;
-	  padding: 0;
-	}
-
 
 	/* alone */
-	#alone {
+	#custom-dadJoke {
 	  background-color: rgba(0,0,0,0.5);
 	  border: solid 2px rgba(58,58,58,0.66);
 	  border-radius: 10px 10px 10px 10px;
 	  margin: 0px 5px;
-	  padding: 5px;
+	  padding: 10px;
 	}
 
 	/* left */
-	#left {
+	#cpu, #wireplumber {
 	  background-color: rgba(0,0,0,0.5);
 	  border: solid 2px rgba(58,58,58,0.66);
 	  border-radius: 10px 0px 0px 10px;
 	  margin: 0px 5px;
-	  padding: 5px;
+	  padding: 10px;
 	}
 
 	/* middle */
@@ -72,16 +63,16 @@
 	  border: solid 2px rgba(58,58,58,0.66);
 	  border-radius: 0px 0px 0px 0px;
 	  margin: 0px 5px;
-	  padding: 5px;
+	  padding: 10px;
 	}
 
 	/* right */
-	#right {
+	#memory, #clock {
 	  background-color: rgba(0,0,0,0.5);
 	  border: solid 2px rgba(58,58,58,0.66);
 	  border-radius: 0px 10px 10px 0px;
 	  margin: 0px 5px;
-	  padding: 5px;
+	  padding: 10px;
 	}
     '';
     # ENABLE THIS FOR DEBUG
