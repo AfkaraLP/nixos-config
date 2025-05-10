@@ -23,6 +23,7 @@ in
     ./home-modules/hyprland.nix
     ./home-modules/terminal.nix
     ./home-modules/waybar.nix
+    ./home-modules/assets/fonts.nix
   ]; # imports 
 
   home.packages = with pkgs; [

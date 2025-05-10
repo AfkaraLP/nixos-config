@@ -24,6 +24,7 @@
           config.default_prog = { "zsh" }
 	  enable_wayland = false
  
+ 	  config.font = wezterm.font 'Fira Code'
           config.font_size = 12.0
           config.hide_tab_bar_if_only_one_tab = true
           config.window_background_opacity = 0.5

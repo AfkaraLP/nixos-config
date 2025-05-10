@@ -5,6 +5,11 @@
     enable = true;
     settings = {
       mainBar = {
+        output = [
+	  "DP-1"
+	  "DP-2"
+	  "DP-3"
+	];
         layer = "top";
 	position = "top";
 	height = 35;
