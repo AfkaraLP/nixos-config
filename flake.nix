@@ -31,6 +31,8 @@
           ./configuration.nix
 	  ./default_programs.nix
 
+	  nixvim.nixosModules.nixvim
+
 	  home-manager.nixosModules.home-manager 
 	  {
 	    home-manager.useGlobalPkgs = true;
