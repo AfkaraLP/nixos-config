@@ -49,6 +49,21 @@
               replace = "https://fixvx.com/$1";
               onlyIfIncludes = "";
             }
+	    {
+              find = "/https?:\\/\\/www\\.reddit\\.com\\/(r\\/[^\\/?]+\\/comments\\/[^\\/?]+)\\/?(?:\\?[^\\s]*)?/";
+              replace = "https://rxddit.com/$1";
+              onlyIfIncludes = "";
+            }
+	    {
+              find = "/https?:\\/\\/instagram\\.com\\/(p\\/[^\\/?]+)\\/?(?:\\?[^\\s]*)?/";
+              replace = "https://ddinstagram.com/$1";
+              onlyIfIncludes = "";
+            }
+	    {
+              find = "/https?:\\/\\/www\\.tiktok\\.com\\/[@A-Za-z0-9_]+\\/video\\/([0-9]+)\\/?(?:\\?[^\\s]*)?/";
+              replace = "https://vxtiktok.com/$1";
+              onlyIfIncludes = "";
+            }
 	  ]; # regexRules 
 	}; # textReplace 
 	typingTweaks.enable = true;
