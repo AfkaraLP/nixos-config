@@ -30,6 +30,7 @@
         modules = [
           ./configuration.nix
 	  ./default_programs.nix
+	  ./boot_options.nix
 
 	  nixvim.nixosModules.nixvim
 
