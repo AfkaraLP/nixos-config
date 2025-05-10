@@ -57,7 +57,7 @@
 	bufferline.enable = true;
 	noice.enable = true;
 	trouble.enable = true;
-	conform.enable = true;
+	conform-nvim.enable = true;
 
 	lsp = {
 	  enable = true;
