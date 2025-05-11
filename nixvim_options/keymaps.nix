@@ -2,6 +2,6 @@
 
 {
 
-  nixvim.keymaps = [
+  programs.nixvim.keymaps = [
   ]; # keymap 
 }
