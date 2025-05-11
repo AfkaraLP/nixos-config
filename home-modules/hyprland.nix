@@ -2,6 +2,10 @@
 
 {
 
+  imports = [
+    ./hypland_util/themes.nix
+  ]; # imports 
+
  wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
@@ -35,6 +39,7 @@
         "$mod, P, pseudo, # dwindle"
         "$mod, S, togglesplit, # dwindle"
         "$mod, D, exec, $discord"
+	"$mod, SHIFT, S, exec, grimshot copy area"
 
         "$mod, H, movefocus, l"
         "$mod, L, movefocus, r"
