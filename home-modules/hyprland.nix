@@ -101,6 +101,7 @@
 	# "stayfocused, class:vesktop"
 	"forcergbx, class:vesktop, class:firefox"
 	"opaque, class:vesktop, class:firefox"
+	"fullscreen, title:.*You[tT]ube.*"
       ]; # windowrulev2
 
       layerrule = [
