@@ -29,7 +29,6 @@
 
 
   services = { 
-    preload.enable = true;
     xserver = { 
       xkb = {
         layout = "us";
