@@ -33,6 +33,7 @@
 	  max-length = 110;
           exec = pkgs.writeShellScript "dadJoke" ''
             joke=$(curl -H "Accept: text/plain" https://icanhazdadjoke.com/)
+	    joke=$(echo "$joke" | sed ":a;N;$!ba;s/\n/, /g")
 	    mkdir -p ~/.tmp
 	    touch ~/.tmp/waybar-dadjoke.txt
 	    echo "$joke" > ~/.tmp/waybar-dadjoke.txt
@@ -40,6 +41,7 @@
           '';
 	  on-click-left = pkgs.writeShellScript "dadJokeReroll" ''
             joke=$(curl -H "Accept: text/plain" https://icanhazdadjoke.com/)
+	    joke=$(echo "$joke" | sed ":a;N;$!ba;s/\n/, /g")
 	    mkdir -p ~/.tmp
 	    touch ~/.tmp/waybar-dadjoke.txt
 	    echo "$joke" > ~/.tmp/waybar-dadjoke.txt
