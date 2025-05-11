@@ -27,6 +27,7 @@ in
     sway-contrib.grimshot
     wl-clipboard
     bottom
+    wineWowPackages.waylandFull
   ]; # home.packages 
 
   xdg.configFile."wpaperd/wallpaper.toml".source = (pkgs.formats.toml { }).generate "wallpaper_config_afkara" wallpaperConfig;

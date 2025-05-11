@@ -98,7 +98,7 @@
 	"monitor:^HDMI.*, class:vesktop"
 	"monitor:^DP.*, class:firefox"
 	"workspace:3, class:$cached"
-	"stayfocused, class:vesktop"
+	# "stayfocused, class:vesktop"
 	"forcergbx, class:vesktop, class:firefox"
 	"opaque, class:vesktop, class:firefox"
       ]; # windowrulev2

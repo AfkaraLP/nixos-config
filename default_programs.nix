@@ -1,6 +1,10 @@
-{ lib, pkgs, ... }: 
+{ config, lib, pkgs, ... }: 
 
 {
+  imports = [
+    ./nixvim_options/keymaps.nix
+  ]; # imports 
+
   programs = {
   
     firefox = {
@@ -67,8 +71,6 @@
 	  servers = {
 	    rust_analyzer = {
 	      enable = true;
-	      installCargo = true;
-	      installRustc = true;
 	    };
 	    nixd.enable = true;
 	    jsonls.enable = true;
