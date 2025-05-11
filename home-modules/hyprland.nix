@@ -39,7 +39,7 @@
         "$mod, P, pseudo, # dwindle"
         "$mod, S, togglesplit, # dwindle"
         "$mod, D, exec, $discord"
-	"$mod, SHIFT, S, exec, grimshot copy area"
+	"SUPER_SHIFT, S, exec, grimshot copy area"
 
         "$mod, H, movefocus, l"
         "$mod, L, movefocus, r"

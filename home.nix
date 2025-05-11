@@ -22,6 +22,7 @@ in
   ]; # imports 
 
   home.packages = with pkgs; [
+    dconf
     bat
     sway-contrib.grimshot
     wl-clipboard
