@@ -2,14 +2,27 @@
 
 {
   ### BOOT
-  systemd.services = {
-    systemd-udev-settle.enable = false; # if all shit fails enable that again
-    NetworkManager-wait-online.enable = false;
-    "systemd-timesyncd".enable = false;
-    nscd.serviceConfig.TimeoutStopSec = "3s";
-    "NetworkManager-wait-online".serviceConfig.TimeoutStopSec = "5s";
-    nscd.enable = false;
-    # "systemd-timesyncd".wantedBy = lib.mkForce [ ];
+  systemd = {
+    services = {
+      systemd-udev-settle.enable = false; # if all shit fails enable that again
+      NetworkManager-wait-online.enable = false;
+      systemd-timesyncd.enable = false;
+      systemd-rfkill.enable = false;
+
+      firewall = {
+        after = [ "network-online.target" ];
+	wantedBy = [ "multi-user.target" ];
+      }; # "firewall" 
+
+      nscd.serviceConfig.TimeoutStopSec = "2s";
+      NetworkManager-wait-online.serviceConfig.TimeoutStopSec = "2s";
+      nscd.enable = false;
+      disable-wifi-on-boot = {
+        restartIfChanged = false;
+	after = [ "NetworkManager.service" ];
+      };
+    }; # services 
+    tpm2.enable = false;
   }; # systemd.services
   services = {
     ntp.enable = false;
@@ -26,6 +39,8 @@
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     }; # loader
+
+    kernelParams = [ "rootflags=ro" "fsck.mode=skip" ];
 
     initrd = {
       compressor = "zstd";
