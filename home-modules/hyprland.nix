@@ -20,6 +20,7 @@
       "$main_monitor" = "desc:Microstep MSI";
       "$second_monitor" = "desc:HKC OVERSEAS LIMITED S01";
       "$waybar" = "waybar";
+      "$cached" = "$browser, $terminal";
 
       input = {
         kb_layout = "us";
@@ -61,7 +62,7 @@
       ];
 
       monitor = [
-        " $main_monitor, 1920x1080@60, 0x0, 1"
+        " $main_monitor, 1920x1080@144, 0x0, 1"
         " $second_monitor, 1920x1080@60, 1920x0, 1"
       ]; # monitor
       # ecosystem = {
@@ -89,11 +90,17 @@
       ]; # env
 
       windowrulev2 = [
-        # "decoration:0;class:.*" #
-        "noblur, class:firefox"
+        # RULE, what to match
+        "noblur, class:firefox, class:vesktop"
         "decorate off, class:.*"
         "suppressevent maximize, class:.*"
         "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
+	"monitor:^HDMI.*, class:vesktop"
+	"monitor:^DP.*, class:firefox"
+	"workspace:3, class:$cached"
+	"stayfocused, class:vesktop"
+	"forcergbx, class:vesktop, class:firefox"
+	"opaque, class:vesktop, class:firefox"
       ]; # windowrulev2
 
       layerrule = [
@@ -115,6 +122,7 @@
           size = 6;
           passes = 2;
           vibrancy = 0.1696;
+	  new_optimizations = true;
         }; # blur
 
       }; # decoration
@@ -125,7 +133,7 @@
       }; # misc
 
       animations = {
-        enabled = "yes, please :)";
+        enabled = true;
         bezier = [ "easeOutQuint,0.23,1,0.32,1"
                    "easeInOutCubic,0.65,0.05,0.36,1"
                    "linear,0,0,1,1"
