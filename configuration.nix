@@ -68,6 +68,7 @@
   environment = {
     systemPackages = with pkgs; [
       killall
+      appimage-run
     ]; # systemPackages 
     variables = {
       NIXOS_OZONE_WL = "1";
