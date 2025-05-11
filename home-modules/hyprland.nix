@@ -3,7 +3,7 @@
 {
 
   imports = [
-    ./hypland_util/themes.nix
+    ./hyprland_util/themes.nix
   ]; # imports 
 
  wayland.windowManager.hyprland = {
