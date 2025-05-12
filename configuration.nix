@@ -90,6 +90,21 @@
       extraPackages = with pkgs; [ nvidia-vaapi-driver ];
     }; # graphics 
 
+    bluetooth = {
+    enable = true;
+    settings = {
+      General = {
+        Name = "Hello";
+        ControllerMode = "dual";
+        FastConnectable = "true";
+        Experimental = "true";
+      }; # General 
+      Policy = {
+        AutoEnable = "true";
+      }; # Policy 
+    }; # settings 
+    }; # bluetooth 
+
   }; # hardware 
 
   xdg.portal = {
