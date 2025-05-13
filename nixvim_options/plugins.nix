@@ -4,7 +4,7 @@
   programs.nixvim.plugins = {
     harpoon = {
       enable = true;
-      audoLoad = true;
+      autoLoad = true;
     }; # harpoon
     guess-indent.enable = true;
     typst-preview.enable = true;
