@@ -3,5 +3,6 @@
 {
 
   programs.nixvim.keymaps = [
+	
   ]; # keymap 
 }
