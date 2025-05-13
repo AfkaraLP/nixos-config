@@ -2,11 +2,17 @@
 
 {
   programs.nixvim.plugins = {
+    harpoon = {
+      enable = true;
+      audoLoad = true;
+    }; # harpoon
     guess-indent.enable = true;
+    typst-preview.enable = true;
     cmp-snippy.enable = true;
     telescope.enable = true;
     lualine.enable = true;
     snacks.enable = true;
+    hex.enable = true;
     fzf-lua.enable = true;
     which-key.enable = true;
     nvim-tree = {
@@ -15,10 +21,8 @@
       diagnostics.enable = true;
       git.enable = true;
       view.relativenumber = true;
-    }; # nvim-tree 
-    mini = {
-      enable = true;
-    }; # mini
+    }; # nvim-tree
+    mini = { enable = true; }; # mini
     oil.enable = true;
     blink-cmp.enable = true;
     lazydev.enable = true;
