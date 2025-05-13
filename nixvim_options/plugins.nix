@@ -1,10 +1,10 @@
 { config, pkgs, lib, nixvim, ... }: 
 
 {
-  nixvim.plugins = {
-  lazy.enable = true;
-  guess-indent.enable = true;
-  cmp-snippy.enable = true;
+  programs.nixvim.plugins = {
+	  lazy.enable = true;
+	  guess-indent.enable = true;
+	  cmp-snippy.enable = true;
         telescope.enable = true;
         lualine.enable = true;
         snacks.enable = true;
@@ -46,4 +46,5 @@
             bashls.enable = true;
           }; # servers
         }; # lsp};
+}; # nixvim.plugins 
 }
