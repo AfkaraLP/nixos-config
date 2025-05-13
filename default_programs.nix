@@ -42,10 +42,14 @@
       enableMan = true;
       viAlias = true;
       vimAlias = true;
+      options = {
+        relativenumber = true;
+        incsearch = true;
+      }; # options 
       clipboard.providers.wl-copy.enable = true;
       colorschemes.tokyonight = {
         enable = true;
-	settings.transparent = true;
+        settings.transparent = true;
       }; # colorschemes.tokyonight 
       dependencies = {
         rust-analyzer.enable = true;
