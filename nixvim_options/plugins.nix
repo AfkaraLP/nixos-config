@@ -9,9 +9,15 @@
     snacks.enable = true;
     fzf-lua.enable = true;
     which-key.enable = true;
+    nvim-tree = {
+      enable = true;
+
+      diagnostics.enable = true;
+      git.enable = true;
+      view.relativenumber = true;
+    }; # nvim-tree 
     mini = {
       enable = true;
-      # mockDevIcons = true;
     }; # mini
     oil.enable = true;
     blink-cmp.enable = true;
@@ -25,7 +31,7 @@
       setup = {
         all.linter = "alex";
         nix = {
-          formatter = "alejandra";
+          formatter = "nixfmt";
           linter = "statix";
         }; # nix
         rust = { formatter = "rustfmt"; };
