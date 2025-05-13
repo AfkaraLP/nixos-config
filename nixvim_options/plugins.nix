@@ -1,4 +1,4 @@
-{ pkgs, nixvim }: 
+{ config, pkgs, lib, nixvim, ... }: 
 
 {
   nixvim.plugins = {
