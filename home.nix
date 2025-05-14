@@ -5,10 +5,9 @@ let
       path = "/home/afkara/wallpapers";
       duration = "1m";
       sorting = "random";
-    }; # default 
-  }; # wallpaperConfig 
-in
-{
+    }; # default
+  }; # wallpaperConfig
+in {
   home.username = "afkara";
   home.homeDirectory = "/home/afkara";
 
@@ -19,28 +18,28 @@ in
     ./home-modules/nixcord.nix
     ./home-modules/assets/fonts.nix
     ./home-modules/wofi.nix
-  ]; # imports 
+  ]; # imports
 
   home.packages = with pkgs; [
+    helix
     dconf
     bat
     sway-contrib.grimshot
     wl-clipboard
     bottom
     wineWowPackages.waylandFull
-  ]; # home.packages 
+  ]; # home.packages
 
-  xdg.configFile."wpaperd/wallpaper.toml".source = (pkgs.formats.toml { }).generate "wallpaper_config_afkara" wallpaperConfig;
+  xdg.configFile."wpaperd/wallpaper.toml".source =
+    (pkgs.formats.toml { }).generate "wallpaper_config_afkara" wallpaperConfig;
   services = {
     wpaperd = {
       enable = true;
-      settings = {};
-    }; # wpaperd 
-  }; # services 
-  
+      settings = { };
+    }; # wpaperd
+  }; # services
+
   home.stateVersion = "24.11";
 
-  programs = {
-    home-manager.enable = true;
-  }; # programs 
+  programs = { home-manager.enable = true; }; # programs
 }
