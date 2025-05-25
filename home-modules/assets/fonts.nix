@@ -5,5 +5,7 @@
   
   home.packages = with pkgs; [
     fira-code
+    monocraft
+    jetbrains-mono
   ]; # fonts.packages 
 }
