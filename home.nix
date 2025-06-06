@@ -15,12 +15,13 @@ in {
     ./home-modules/hyprland.nix
     ./home-modules/terminal.nix
     ./home-modules/waybar.nix
-    ./home-modules/nixcord.nix
+    # ./home-modules/nixcord.nix
     ./home-modules/assets/fonts.nix
     ./home-modules/wofi.nix
   ]; # imports
 
   home.packages = with pkgs; [
+    nil
     helix
     dconf
     bat
@@ -28,6 +29,8 @@ in {
     wl-clipboard
     bottom
     wineWowPackages.waylandFull
+    easyeffects
+    typst
   ]; # home.packages
 
   xdg.configFile."wpaperd/wallpaper.toml".source =
@@ -39,7 +42,7 @@ in {
     }; # wpaperd
   }; # services
 
-  home.stateVersion = "24.11";
+  home.stateVersion = "25.05";
 
   programs = { home-manager.enable = true; }; # programs
 }
