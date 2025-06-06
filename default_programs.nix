@@ -1,8 +1,8 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports =
-    [ ./nixvim_options/keymaps.nix ./nixvim_options/plugins.nix ]; # imports
+  # imports =
+    # [ ./nixvim_options/keymaps.nix ./nixvim_options/plugins.nix ]; # imports
 
   programs = {
 
@@ -37,18 +37,18 @@
       }; # policies
     }; # firefox
 
-    nixvim = {
-      enable = true;
-      enableMan = true;
-      viAlias = true;
-      vimAlias = true;
-      clipboard.register = "unnamedplus";
-      colorschemes.tokyonight = {
-        enable = true;
-        settings.transparent = true;
-      }; # colorschemes.tokyonight
-      dependencies = { rust-analyzer.enable = true; }; # dependencies
-    }; # nixvim
+    # nixvim = {
+    #   enable = true;
+    #   enableMan = true;
+    #   viAlias = true;
+    #   vimAlias = true;
+    #   clipboard.register = "unnamedplus";
+    #   colorschemes.tokyonight = {
+    #     enable = true;
+    #     settings.transparent = true;
+    #   }; # colorschemes.tokyonight
+    #   dependencies = { rust-analyzer.enable = true; }; # dependencies
+    # }; # nixvim
 
     git.enable = true;
 

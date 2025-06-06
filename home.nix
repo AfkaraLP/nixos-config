@@ -32,6 +32,9 @@ in {
     easyeffects
     typst
     tinymist
+    (discord.override {
+      withVencord = true;
+    })
   ]; # home.packages
 
   xdg.configFile."wpaperd/wallpaper.toml".source =
