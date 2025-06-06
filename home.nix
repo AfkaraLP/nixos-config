@@ -20,23 +20,6 @@ in {
     ./home-modules/wofi.nix
   ]; # imports
 
-  home.packages = with pkgs; [
-    nil
-    helix
-    dconf
-    bat
-    sway-contrib.grimshot
-    wl-clipboard
-    bottom
-    wineWowPackages.waylandFull
-    easyeffects
-    typst
-    tinymist
-    (discord.override {
-      withVencord = true;
-    })
-  ]; # home.packages
-
   xdg.configFile."wpaperd/wallpaper.toml".source =
     (pkgs.formats.toml { }).generate "wallpaper_config_afkara" wallpaperConfig;
   services = {

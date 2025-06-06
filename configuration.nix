@@ -69,6 +69,18 @@
     systemPackages = with pkgs; [
       killall
       appimage-run
+      nil
+      helix
+      dconf
+      bat
+      sway-contrib.grimshot
+      wl-clipboard
+      bottom
+      wineWowPackages.waylandFull
+      easyeffects
+      typst
+      tinymist
+      discord
     ]; # systemPackages 
     variables = {
       NIXOS_OZONE_WL = "1";
