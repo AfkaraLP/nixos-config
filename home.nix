@@ -31,6 +31,7 @@ in {
     wineWowPackages.waylandFull
     easyeffects
     typst
+    tinymist
   ]; # home.packages
 
   xdg.configFile."wpaperd/wallpaper.toml".source =
