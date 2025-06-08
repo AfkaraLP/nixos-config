@@ -2,32 +2,18 @@
 
 {
   programs = {
-    zsh = {
-      enable = true;
-      shellAliases = {
-        nrs = "sudo nixos-rebuild switch";
-      };
-      oh-my-zsh = {
-	enable = true;
-	plugins = [ "git" ];
-	theme = "agnoster";
-      }; # oh-my-zsh
-    }; # zsh
- 
       zoxide = {
         enable = true;
-        enableZshIntegration = true;
+        enableNushellIntegration = true;
       }; # zoxide
  
       wezterm = {
         enable = true;
-        enableZshIntegration = true;
         extraConfig = ''
           local config = wezterm.config_builder()
-          config.default_prog = { "zsh" }
-	  enable_wayland = false
+      	  enable_wayland = false
  
- 	  config.font = wezterm.font 'Fira Code'
+       	  config.font = wezterm.font 'Jetbrains Mono'
           config.font_size = 12.0
           config.hide_tab_bar_if_only_one_tab = true
           config.window_background_opacity = 0.5

@@ -12,12 +12,8 @@ in {
   home.homeDirectory = "/home/afkara";
 
   imports = [
-    ./home-modules/hyprland.nix
     ./home-modules/terminal.nix
-    ./home-modules/waybar.nix
-    # ./home-modules/nixcord.nix
     ./home-modules/assets/fonts.nix
-    ./home-modules/wofi.nix
   ]; # imports
 
   xdg.configFile."wpaperd/wallpaper.toml".source =

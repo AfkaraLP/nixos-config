@@ -1,10 +1,9 @@
 { config, lib, pkgs, ... }:
 
 {
-  # imports =
-    # [ ./nixvim_options/keymaps.nix ./nixvim_options/plugins.nix ]; # imports
-
   programs = {
+
+    hyprland.enable = true;
 
     firefox = {
       enable = true;
@@ -37,27 +36,7 @@
       }; # policies
     }; # firefox
 
-    # nixvim = {
-    #   enable = true;
-    #   enableMan = true;
-    #   viAlias = true;
-    #   vimAlias = true;
-    #   clipboard.register = "unnamedplus";
-    #   colorschemes.tokyonight = {
-    #     enable = true;
-    #     settings.transparent = true;
-    #   }; # colorschemes.tokyonight
-    #   dependencies = { rust-analyzer.enable = true; }; # dependencies
-    # }; # nixvim
-
     git.enable = true;
-
-    # neovim = {
-    #   enable = true;
-    #   vimAlias = true;
-    #   viAlias = true;
-    #   defaultEditor = true;
-    # }; # neovim 
 
     yazi = { enable = true; }; # yazi
 

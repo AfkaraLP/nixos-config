@@ -7,7 +7,7 @@
 {
   imports =
     [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
+      ./.hidden/hardware-configuration.nix
     ];
 
   networking = {
@@ -43,9 +43,9 @@
       enable = true;
       settings = {
         default_session = {
-	  command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
-	  user = "greeter";
-	}; # default_session 
+      	  command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
+      	  user = "greeter";
+      	}; # default_session 
       }; # settings 
     }; # greetd 
 
@@ -61,7 +61,7 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  system.stateVersion = "24.11"; # Did you read the comment?
+  system.stateVersion = "25.05"; # Did you read the comment?
   
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
@@ -80,7 +80,7 @@
       easyeffects
       typst
       tinymist
-      discord
+      vesktop
     ]; # systemPackages 
     variables = {
       NIXOS_OZONE_WL = "1";
