@@ -8,8 +8,8 @@
 
       shellAliases = {
         nrs = "sudo nixos-rebuild switch";
-        la = "ls -A";
-        ll = "ls -lA";
+        la = "ls -a";
+        ll = "ls -la";
         l = "ls";
       };
     };
