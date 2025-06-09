@@ -11,35 +11,35 @@
       	  "DP-3"
       	];
         layer = "top";
-	position = "top";
-	height = 35;
-	margin = "10 5 0 5";
+      	position = "top";
+      	height = 35;
+      	margin = "10 5 0 5";
 
-	modules-left = [ "cpu" "memory" ];
-	modules-center = [ "custom/dadJoke" ];
-	modules-right = [ "wireplumber" "clock" ];
+      	modules-left = [ "cpu" "memory" ];
+      	modules-center = [ "custom/dadJoke" ];
+      	modules-right = [ "wireplumber" "clock" ];
 
-	"cpu" = {
-	  format = "CPU: {}";
-	}; # "cpu" 
+      	"cpu" = {
+      	  format = "CPU: {}";
+      	}; # "cpu" 
 
-	"memory" = {
+      	"memory" = {
 	  
-	};
+      	};
 
 	"custom/dadJoke" = {
           format = "My Dad Once Said: {}";
           interval = 10;
 	  max-length = 110;
           exec = pkgs.writeShellScript "dadJoke" ''
-            joke=$(curl -H "Accept: text/plain" https://icanhazdadjoke.com/ | sed -n -z 's/\n/, /p')
+            joke=$(curl -H "Accept: text/plain" https://icanhazdadjoke.com/ | sed -z 's/\n/, /p')
       	    mkdir -p ~/.tmp
       	    touch ~/.tmp/waybar-dadjoke.txt
       	    echo "$joke" > ~/.tmp/waybar-dadjoke.txt
       	    echo "$joke"
           '';
 	  on-click-left = pkgs.writeShellScript "dadJokeReroll" ''
-            joke=$(curl -H "Accept: text/plain" https://icanhazdadjoke.com/ | sed -n -z 's/\n/, /p')
+            joke=$(curl -H "Accept: text/plain" https://icanhazdadjoke.com/ | sed -z 's/\n/, /p')
       	    mkdir -p ~/.tmp
       	    touch ~/.tmp/waybar-dadjoke.txt
       	    echo "$joke" > ~/.tmp/waybar-dadjoke.txt
