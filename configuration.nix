@@ -68,6 +68,8 @@
 
   environment = {
     systemPackages = with pkgs; [
+      ripgrep
+      wtype
       killall
       appimage-run
       nil
