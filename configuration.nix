@@ -8,6 +8,7 @@
   imports =
     [ # Include the results of the hardware scan.
       ./.hidden/hardware-configuration.nix
+      ./custom_programs/lunarclient.nix
     ];
 
   networking = {
