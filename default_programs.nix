@@ -3,6 +3,11 @@
 {
   programs = {
 
+    appimage = {
+      enable = true;
+      binfmt = true;
+    };
+
     hyprland.enable = true;
 
     firefox = {
