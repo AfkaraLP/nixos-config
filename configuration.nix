@@ -68,7 +68,6 @@
 
   environment = {
     systemPackages = with pkgs; [
-      ripgrep
       wtype
       killall
       appimage-run
@@ -79,11 +78,13 @@
       sway-contrib.grimshot
       wl-clipboard
       bottom
-      wineWowPackages.waylandFull
       easyeffects
       typst
       tinymist
       vesktop
+      (lutris.override {
+        extraLibraries = pkgs: [];
+      })
     ]; # systemPackages 
     variables = {
       NIXOS_OZONE_WL = "1";
