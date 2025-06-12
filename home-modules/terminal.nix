@@ -12,6 +12,15 @@
         ll = "ls -la";
         l = "ls";
       };
+
+      settings = {
+        show_banner = false;
+      };
+
+      plugins = [
+        pkgs.nushellPlugins.skim
+        pkgs.nushellPlugins.highlight
+      ];
     };
 
     zoxide = {
