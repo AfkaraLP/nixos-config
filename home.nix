@@ -15,6 +15,7 @@ in {
     ./home-modules/terminal.nix
     ./home-modules/assets/fonts.nix
     ./home-modules/waybar.nix
+    ./home-modules/assets/themes.nix
   ]; # imports
 
   xdg.configFile."wpaperd/wallpaper.toml".source =
