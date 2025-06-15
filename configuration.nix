@@ -86,7 +86,6 @@
         extraLibraries = pkgs: [];
       })
       wine
-      flatpak
     ]; # systemPackages 
     variables = {
       NIXOS_OZONE_WL = "1";
