@@ -8,6 +8,7 @@
   imports =
     [ # Include the results of the hardware scan.
       ./.hidden/hardware-configuration.nix
+      ./.hidden/systemd_services.nix
       # ./custom_programs/lunarclient.nix
     ];
 
@@ -129,7 +130,4 @@
     extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
     configPackages = [ pkgs.hyprland ];
   }; # xdg.portal 
-
-  nix.gc.automatic = true;
-  nix.gc.options = "--delete-older-than 3d";
 } # END

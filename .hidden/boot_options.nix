@@ -10,8 +10,8 @@
       systemd-rfkill.enable = false;
 
       firewall = {
-        after = [ "network-online.target" ];
-	wantedBy = [ "multi-user.target" ];
+        # after = [ "network-online.target" ];
+      	wantedBy = [ "multi-user.target" ];
       }; # "firewall" 
 
       nscd.serviceConfig.TimeoutStopSec = "2s";
