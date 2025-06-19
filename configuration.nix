@@ -86,7 +86,8 @@
       (lutris.override {
         extraLibraries = pkgs: [];
       })
-      wine
+      winetricks
+      wineWowPackages.waylandFull
     ]; # systemPackages 
     variables = {
       NIXOS_OZONE_WL = "1";
