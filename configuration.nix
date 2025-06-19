@@ -84,10 +84,11 @@
       tinymist
       vesktop
       (lutris.override {
-        extraLibraries = pkgs: [];
+        extraLibraries = pkgs: [
+          winetricks
+          wineWowPackages.waylandFull
+        ];
       })
-      winetricks
-      wineWowPackages.waylandFull
     ]; # systemPackages 
     variables = {
       NIXOS_OZONE_WL = "1";
@@ -106,6 +107,7 @@
         
     graphics = {
       enable = true;
+      enable32Bit = true;
       extraPackages = with pkgs; [ nvidia-vaapi-driver ];
     }; # graphics 
 
