@@ -86,6 +86,7 @@
       (lutris.override {
         extraLibraries = pkgs: [
           winetricks
+          wine
           wineWowPackages.waylandFull
         ];
       })
