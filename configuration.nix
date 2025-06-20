@@ -94,7 +94,7 @@
           wineWowPackages.waylandFull
         ];
       })
-      quickenu
+      quickemu
     ]; # systemPackages 
     variables = {
       NIXOS_OZONE_WL = "1";
