@@ -85,11 +85,16 @@
       vesktop
       (lutris.override {
         extraLibraries = pkgs: [
+          vulkan-tools
+          adwaita-icon-theme
+          adwaita-qt
+          adwaita-fonts
           winetricks
           wine
           wineWowPackages.waylandFull
         ];
       })
+      quickenu
     ]; # systemPackages 
     variables = {
       NIXOS_OZONE_WL = "1";
