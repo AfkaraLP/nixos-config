@@ -69,7 +69,9 @@
 
   environment = {
     systemPackages = with pkgs; [
-      blender
+      (blender.override {
+        cudaSupport = true;
+      })
       wtype
       killall
       appimage-run
