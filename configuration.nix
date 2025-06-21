@@ -69,6 +69,7 @@
 
   environment = {
     systemPackages = with pkgs; [
+      blender
       wtype
       killall
       appimage-run
