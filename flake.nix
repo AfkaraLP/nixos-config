@@ -36,7 +36,6 @@
       	    home-manager.users.afkara = import ./home.nix;
 
       	  }
-          nix-warez-blender.packages."x86_64-linux".blender_4_4
         ]; # modules 
 	
       }; # nixpkgs.lib.nixosSystem 
