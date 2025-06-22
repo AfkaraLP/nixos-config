@@ -69,9 +69,7 @@
 
   environment = {
     systemPackages = with pkgs; [
-      (blender.override {
-        cudaSupport = true;
-      })
+      lunar-client
       wtype
       killall
       appimage-run

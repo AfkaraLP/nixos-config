@@ -8,10 +8,14 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     }; # home-manager 
+
+    nix-warez-blender = {
+      url = "github:edolstra/nix-warez/85d76721132cc6631bbaa8c950d4d0f3aa4003fd?dir=blender";
+    };
    
   }; # inputs 
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, nix-warez-blender,... }@inputs: {
     
     nixosConfigurations = {
 
@@ -32,8 +36,8 @@
       	    home-manager.users.afkara = import ./home.nix;
 
       	  }
+          nix-warez-blender.packages."x86_64-linux".blender_4_4
         ]; # modules 
-
 	
       }; # nixpkgs.lib.nixosSystem 
 
