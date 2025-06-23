@@ -62,6 +62,11 @@
           editor = {
             line-number = "relative";
             lsp.display-messages = true;
+            cursor-shape = {
+              insert = "bar";
+              normal = "block";
+              select = "underline";
+            };
           };
           keys.insert = {
             j.k = "normal_mode";
