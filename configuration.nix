@@ -74,7 +74,6 @@
       killall
       appimage-run
       nil
-      helix
       dconf
       bat
       sway-contrib.grimshot
