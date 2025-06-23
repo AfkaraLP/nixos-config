@@ -54,5 +54,20 @@
       '';
 
     }; # wezterm
+
+    helix = {
+      enable = true;
+        settings = {
+          theme = "base16_transparent";
+          editor = {
+            line-number = "relative";
+            lsp.display-messages = true;
+          };
+          keys.insert = {
+            j.k = "normal_mode";
+          };
+        };
+      };
   }; # programs 
+
 }
