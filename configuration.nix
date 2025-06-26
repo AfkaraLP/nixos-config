@@ -83,17 +83,9 @@
       typst
       tinymist
       vesktop
-      (lutris.override {
-        extraLibraries = pkgs: [
-          vulkan-tools
-          adwaita-icon-theme
-          adwaita-qt
-          adwaita-fonts
-          winetricks
-          wine
-          wineWowPackages.waylandFull
-        ];
-      })
+      winetricks
+      wine
+      wineWowPackages.waylandFull
       quickemu
     ]; # systemPackages 
     variables = {
