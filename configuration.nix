@@ -84,7 +84,6 @@
       tinymist
       vesktop
       winetricks
-      wine
       wineWowPackages.waylandFull
       quickemu
     ]; # systemPackages 
