@@ -72,21 +72,18 @@
       lunar-client
       wtype
       killall
-      appimage-run
-      nil
+      nixd
+      nixfmt-classic
       dconf
-      bat
       sway-contrib.grimshot
       wl-clipboard
-      bottom
       easyeffects
       typst
       tinymist
       vesktop
-      winetricks
-      wineWowPackages.waylandFull
       quickemu
     ]; # systemPackages 
+
     variables = {
       NIXOS_OZONE_WL = "1";
       GBM_BACKEND = "nvidia-drm";

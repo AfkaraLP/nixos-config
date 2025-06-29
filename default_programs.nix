@@ -13,6 +13,12 @@
       xwayland.enable = true;
     };
 
+    steam = {
+      enable = true;
+      remotePlay.openFirewall = true;
+      dedicatedServer.openFirewall = true;
+    };
+
     firefox = {
       enable = true;
       package =

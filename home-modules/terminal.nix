@@ -1,5 +1,20 @@
 { config, pkgs, lib, ...}:
 
+let
+  helix-lsp-config = {
+     language-server.rust-analyzer.config = {
+        checkOnSave.allTargets = true;
+      };
+    language-server.nixd = {
+      command = "nixd";
+      formatting = {
+        command = ["alejandra"];
+      };
+      nixpkgs.expr = "import (builtins.getFlake \"/etc/nixos\").inputs.nixpkgs { }";
+      options.nixos.expr = "(builtins.getFlake \"/etc/nixos\").nixosConfigurations.bld0.options";
+    };
+  };
+in
 {
   programs = {
 
@@ -72,6 +87,7 @@
             j.k = "normal_mode";
           };
         };
+        languages = helix-lsp-config;
       };
   }; # programs 
 
