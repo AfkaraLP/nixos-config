@@ -17,17 +17,7 @@
 
         cpu = {
           interval = 1;
-          format = "cpu: {icon}{usage}%";
-          format-icons = [
-            "<span color='#69ff94'>▁</span>" 
-            "<span color='#2aa9ff'>▂</span>" 
-            "<span color='#f8f8f2'>▃</span>" 
-            "<span color='#f8f8f2'>▄</span>" 
-            "<span color='#ffffa5'>▅</span>" 
-            "<span color='#ffffa5'>▆</span>" 
-            "<span color='#ff9977'>▇</span>" 
-            "<span color='#dd532e'>█</span>"  
-          ];
+          format = "cpu: {usage}%";
         }; # "cpu"
 
         clock = {
