@@ -82,6 +82,7 @@
       tinymist
       vesktop
       quickemu
+      lmstudio
     ]; # systemPackages 
 
     variables = {
