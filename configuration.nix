@@ -81,8 +81,8 @@
       typst
       tinymist
       vesktop
-      quickemu
-      lmstudio
+      wineWowPackages.waylandFull
+      winetricks
     ]; # systemPackages 
 
     variables = {

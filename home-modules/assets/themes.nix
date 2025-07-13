@@ -23,7 +23,7 @@
     }; # iconTheme 
 
     font = {
-      name = "Sans";
+      name = "Monocraft";
       size = 11;
     }; # font 
   }; # gtk 
