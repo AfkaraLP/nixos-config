@@ -2,20 +2,17 @@
   description = "A very basic flake";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "nixpkgs/nixos-25.05";
 
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     }; # home-manager 
 
-    nix-warez-blender = {
-      url = "github:edolstra/nix-warez/85d76721132cc6631bbaa8c950d4d0f3aa4003fd?dir=blender";
-    };
    
   }; # inputs 
 
-  outputs = { self, nixpkgs, home-manager, nix-warez-blender,... }@inputs: {
+  outputs = { self, nixpkgs, home-manager,... }@inputs: {
     
     nixosConfigurations = {
 

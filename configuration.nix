@@ -9,7 +9,6 @@
     [ # Include the results of the hardware scan.
       ./.hidden/hardware-configuration.nix
       ./.hidden/systemd_services.nix
-      # ./custom_programs/lunarclient.nix
     ];
 
   networking = {
@@ -56,15 +55,15 @@
       alsa.enable = true;
       alsa.support32Bit = true;
       pulse.enable = true;
-      config.pipewire = {
-        properties = {
-          default.clock.allowed-rates = [ 44100 48000 96000 ];
-          "log.level" = 4;
-          "default.clock.quantum" = 256;
-          "default.clock.min-quantum" = 256;
-          "default.clock.max-quantum" = 256;
-        };
-      };
+      # config.pipewire = {
+      #   properties = {
+      #     default.clock.allowed-rates = [ 44100 48000 96000 ];
+      #     "log.level" = 4;
+      #     "default.clock.quantum" = 256;
+      #     "default.clock.min-quantum" = 256;
+      #     "default.clock.max-quantum" = 256;
+      #   };
+      # };
     }; # pipewire
 
     pulseaudio.support32Bit = true;
