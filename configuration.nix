@@ -91,6 +91,7 @@
       vesktop
       wineWowPackages.waylandFull
       winetricks
+      prismlauncher
     ]; # systemPackages 
 
     variables = {
