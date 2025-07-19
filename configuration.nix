@@ -93,12 +93,13 @@
       wineWowPackages.waylandFull
       winetricks
       (prismlauncher.override {
-        withWaylandGLFW = true;
         jdks = [
           temurin-bin-21
           temurin-bin-17
           temurin-bin-8
         ];
+        additionalPrograms = [ ffmpeg ];
+        additionalLibs = [ pkgs.glfw-wayland ];
       })
       mangohud
     ]; # systemPackages 
