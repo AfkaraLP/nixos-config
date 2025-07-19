@@ -2,6 +2,11 @@
 
 {
   programs = {
+    gamemode.enable = true;
+    gamescope = {
+      enable = true;
+      capSysNice = true;
+    };
 
     appimage = {
       enable = true;
@@ -17,6 +22,9 @@
       enable = true;
       remotePlay.openFirewall = true;
       dedicatedServer.openFirewall = true;
+      extraCompatPackages = with pkgs; [
+        proton-ge-bin
+      ];
     };
 
     firefox = {

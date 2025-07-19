@@ -24,6 +24,10 @@
     }; # services 
     tpm2.enable = false;
   }; # systemd.services
+  powerManagement = {
+    enable = true;
+    cpuFreqGovernor = "performance";
+  };
   services = {
     ntp.enable = false;
     chrony.enable = true;
@@ -40,7 +44,7 @@
       efi.canTouchEfiVariables = true;
     }; # loader
 
-    kernelParams = [ "rootflags=ro" "fsck.mode=skip" ];
+    kernelParams = [ "rootflags=ro" "fsck.mode=skip" "amd_pstate=active"];
 
     initrd = {
       compressor = "zstd";

@@ -21,7 +21,6 @@
         system = "x86_64-linux";
         modules = [
           ./configuration.nix
-      	  ./default_programs.nix
       	  ./.hidden/boot_options.nix
 
       	  home-manager.nixosModules.home-manager 

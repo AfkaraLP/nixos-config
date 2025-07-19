@@ -9,6 +9,7 @@
     [ # Include the results of the hardware scan.
       ./.hidden/hardware-configuration.nix
       ./.hidden/systemd_services.nix
+  	  ./default_programs.nix
     ];
 
   networking = {
@@ -91,7 +92,15 @@
       vesktop
       wineWowPackages.waylandFull
       winetricks
-      prismlauncher
+      (prismlauncher.override {
+        withWaylandGLFW = true;
+        jdks = [
+          temurin-bin-21
+          temurin-bin-17
+          temurin-bin-8
+        ];
+      })
+      mangohud
     ]; # systemPackages 
 
     variables = {
