@@ -76,6 +76,7 @@ in
           theme = "base16_transparent";
           editor = {
             line-number = "relative";
+            shell = [ "nu" "--stdin" "-c" ];
             lsp.display-messages = true;
             cursor-shape = {
               insert = "bar";

@@ -29,6 +29,13 @@
             border-radius: 10px;
             margin: 5px;
             padding: 8px;
+            overflow: hidden;             /* <-- clip children to rounded corners */
+            max-height: 80vh;             /* <-- prevent growing past viewport */
+        }
+
+        /* Hide the built-in search input */
+        #input {
+            display: none;
         }
 
         /* Outer box wrapping everything */
@@ -40,28 +47,14 @@
             padding: 4px;
         }
 
-        /* Search input */
-        #input {
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 2px solid rgba(58, 58, 58, 0.66);
-            border-radius: 10px;
-            padding: 8px 12px;
-            color: #FFFFFF;
-            font-weight: bold;
-            margin-bottom: 6px;
-            outline: none;
-        }
-        #input:focus {
-            border-color: #89B4FA;
-        }
-
         /* Scrolled entry list */
         #scroll {
             background-color: transparent;
             border: none;
-            border-radius: 10px;
+            border-radius: 0 0 10px 10px; /* <-- round bottom corners */
             margin: 4px 0;
-            padding: 4px;
+            padding: 4px 0 8px 0;          /* <-- extra bottom padding */
+            overflow-y: auto;
         }
 
         /* Inner entry container */
@@ -77,7 +70,7 @@
         #entry {
             background-color: transparent;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             margin: 2px 0;
             padding: 6px 8px;
             transition: background-color 0.15s ease-in-out;
@@ -123,7 +116,7 @@
             padding: 4px;
             margin-top: 4px;
         }
-        
+
     '';
   };
 }
