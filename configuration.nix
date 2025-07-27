@@ -60,15 +60,14 @@
       alsa.enable = true;
       alsa.support32Bit = true;
       pulse.enable = true;
-      # config.pipewire = {
-      #   properties = {
-      #     default.clock.allowed-rates = [ 44100 48000 96000 ];
-      #     "log.level" = 4;
-      #     "default.clock.quantum" = 256;
-      #     "default.clock.min-quantum" = 256;
-      #     "default.clock.max-quantum" = 256;
-      #   };
-      # };
+      extraConfig.pipewire = {
+        "context.properties" = {
+          "default.clock.allowed-rates" = [ 44100 48000 96000 ];
+          "default.clock.quantum" = 2048;
+          "default.clock.min-quantum" = 2048;
+          "default.clock.max-quantum" = 8192;
+        };
+      };
     }; # pipewire
 
     pulseaudio.support32Bit = true;
