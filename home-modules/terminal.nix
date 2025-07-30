@@ -32,9 +32,7 @@ in
         show_banner = false;
       };
 
-      envFile = {
-        OLLAMA = builtins.readFile ./.env;
-      };
+      envFile = builtins.readFile ./.env;
 
     };
 
