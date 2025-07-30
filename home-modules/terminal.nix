@@ -32,10 +32,10 @@ in
         show_banner = false;
       };
 
-      plugins = [
-        pkgs.nushellPlugins.skim
-        pkgs.nushellPlugins.highlight
-      ];
+      envFile = {
+        OLLAMA = builtins.readFile ./.env;
+      };
+
     };
 
     zoxide = {
