@@ -14,6 +14,11 @@ let
       options.nixos.expr = "(builtins.getFlake \"/etc/nixos\").nixosConfigurations.bld0.options";
     };
   };
+  unstableHelix = import (builtins.fetchTarball {
+    url = "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
+  }) {
+    system = pkgs.system;
+  };
 in
 {
   programs = {
@@ -68,6 +73,7 @@ in
     }; # wezterm
 
     helix = {
+      package = unstableHelix.helix;
       enable = true;
         settings = {
           theme = "base16_transparent";
