@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-25.05";
+    unstable.url = "nixpkgs/nixos-unstable";
 
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";
@@ -12,7 +13,7 @@
    
   }; # inputs 
 
-  outputs = { self, nixpkgs, home-manager,... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, unstable, ... }@inputs: {
     
     nixosConfigurations = {
 
@@ -30,6 +31,11 @@
       	    home-manager.backupFileExtension = "backup";
 
       	    home-manager.users.afkara = import ./home.nix;
+            home-manager.extraSpecialArgs = {
+              unstablePkgs = import unstable {
+                system = "x86_64-linux";
+              };
+            };
 
       	  }
         ]; # modules 
