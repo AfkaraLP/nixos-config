@@ -32,7 +32,6 @@ in
         show_banner = false;
       };
 
-      envFile = builtins.readFile ./.env;
 
     };
 
