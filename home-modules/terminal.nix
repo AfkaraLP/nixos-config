@@ -85,7 +85,7 @@ in
           };
           keys.insert = {
             j.j = "normal_mode";
-            Escape = "";
+            esc = "";
           };
         };
         languages = helix-lsp-config;
