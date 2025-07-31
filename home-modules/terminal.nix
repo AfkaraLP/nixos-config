@@ -73,6 +73,7 @@ in
         settings = {
           theme = "base16_transparent";
           editor = {
+            soft-wrap.enable = true;
             line-number = "relative";
             shell = [ "nu" "--stdin" "-c" ];
             lsp.display-messages = true;
