@@ -84,7 +84,8 @@ in
             };
           };
           keys.insert = {
-            j.k = "normal_mode";
+            j.j = "normal_mode";
+            escape = "";
           };
         };
         languages = helix-lsp-config;
