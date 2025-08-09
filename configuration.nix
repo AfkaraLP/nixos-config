@@ -39,10 +39,6 @@
 
       videoDrivers = [ "nvidia" ];
     }; # xserver
-
-    tailscale = {
-      enable = true;
-    };
      
     getty.autologinUser = "afkara"; 
     greetd = {
