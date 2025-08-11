@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, zen-browser, ... }:
 let
   wallpaperConfig = {
     default = {

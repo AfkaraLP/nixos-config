@@ -10,16 +10,20 @@
       inputs.nixpkgs.follows = "nixpkgs";
     }; # home-manager 
 
-   
   }; # inputs 
 
-  outputs = { self, nixpkgs, home-manager, unstable, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, unstable, ... }@inputs:
+
+  let
+    system = "x86_64-linux";
+  in
+  {
     
     nixosConfigurations = {
 
       nixos = nixpkgs.lib.nixosSystem {
 
-        system = "x86_64-linux";
+        inherit system;
         modules = [
           ./configuration.nix
       	  ./.hidden/boot_options.nix
@@ -33,7 +37,7 @@
       	    home-manager.users.afkara = import ./home.nix;
             home-manager.extraSpecialArgs = {
               unstablePkgs = import unstable {
-                system = "x86_64-linux";
+                system = system;
               };
             };
 
