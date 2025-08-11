@@ -15,6 +15,23 @@
         modules-center = [ "custom/dadJoke" ];
         modules-right = [ "wireplumber" "clock" ];
 
+        wireplumber = {
+          format = "{volume}%";
+          format-muted = "ded";
+          on-click = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+          on-click-right = ''
+            #!/usr/bin/env bash
+            sinks="71
+            88"
+
+            choice=$(echo "$sinks" | wofi --show dmenu --prompt "Select Sink:")
+
+            if [ -n "$choice" ]; then
+              wpctl set-default "$choice"
+            fi
+          '';
+        };
+
         cpu = {
           interval = 1;
           format = "cpu: {usage}%";
