@@ -21,13 +21,28 @@
           on-click = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
           on-click-right = ''
             #!/usr/bin/env bash
-            sinks="71
-            88"
-
-            choice=$(echo "$sinks" | wofi --show dmenu --prompt "Select Sink:")
+            # 
+            choice=$(wpctl status \
+              | awk '
+                /Sinks:/ { in_sinks=1; next }
+                /Sources:/ { in_sinks=0 }
+                in_sinks && /^[[:space:]]*│/ {
+                  id=$2
+                  # Extract name starting from the 3rd field until "[vol:"
+                  name=""
+                  for (i=3; i<=NF; i++) {
+                    if ($i ~ /^\[vol:/) break
+                    name = name $i " "
+                  }
+                  sub(/[ \t]+$/, "", name)
+                  print id " " name
+                }
+              ' \
+              | wofi --show dmenu --prompt "Select Sink:")
 
             if [ -n "$choice" ]; then
-              wpctl set-default "$choice"
+                sink_id=$(echo "$choice" | awk '{print $1}')
+                wpctl set-default "$sink_id"
             fi
           '';
         };
