@@ -11,7 +11,7 @@
         height = 35;
         margin = "10 5 0 5";
 
-        modules-left = [ "cpu" "memory" ];
+        modules-left = [ "cpu" "custom/gpu" "memory" ];
         modules-center = [ "custom/dadJoke" ];
         modules-right = [ "wireplumber" "clock" ];
 
@@ -61,6 +61,14 @@
           interval = 5;
           format = "{used:0.1f}/{total:0.1f}GiB";
         }; # "memory"
+
+        "custom/gpu" = {
+          format = "gpu: {}°C";
+          interval = 5;
+          exec = pkgs.writeShellScript "gpu" ''
+            nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits
+          '';
+        };
 
         "custom/dadJoke" = {
           format = "My Dad Once Said: {}";
@@ -114,7 +122,7 @@
       }
 
       /* middle */
-      #middle {
+      #middle, #custom-gpu {
         background-color: rgba(0,0,0,0.5);
         border: solid 2px rgba(58,58,58,0.66);
         border-radius: 0px 0px 0px 0px;
