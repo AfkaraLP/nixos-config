@@ -91,6 +91,7 @@
       vesktop
       wineWowPackages.waylandFull
       winetricks
+      wineasio
       (prismlauncher.override {
         jdks = [
           temurin-bin-21

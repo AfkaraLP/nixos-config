@@ -82,6 +82,10 @@ in
               normal = "block";
               select = "underline";
             };
+            end-of-line-diagnostics = "hint";
+            inline-diagnostics = {
+              cursor-line = "warning";
+            };
           };
           keys.insert = {
             j.j = "normal_mode";
