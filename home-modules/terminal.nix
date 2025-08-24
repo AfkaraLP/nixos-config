@@ -15,6 +15,10 @@
 
       settings = { show_banner = false; };
 
+      extraEnv = ''
+          $env.EDITOR = 'hx'
+        '';
+
     };
 
     zoxide = {
