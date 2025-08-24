@@ -72,8 +72,6 @@
 
   system.stateVersion = "25.05"; # Did you read the comment?
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
   environment = {
     systemPackages = with pkgs; [
       lunar-client
@@ -134,4 +132,20 @@
     extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
     configPackages = [ pkgs.hyprland ];
   }; # xdg.portal
+
+  nix = {
+    gc = {
+      automatic = true;
+      options = "--delete-older-than 7d";
+    };
+    settings = {
+      auto-optimise-store = true;
+      cores = 6;
+      experimental-features = [ "nix-command" "flakes" ];
+    };
+    optimise = {
+      automatic = true;
+      dates = [ "03:45" ];
+    };
+  };
 } # END
