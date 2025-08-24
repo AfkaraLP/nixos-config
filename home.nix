@@ -17,6 +17,7 @@ in {
     ./home-modules/waybar.nix
     ./home-modules/assets/themes.nix
     ./home-modules/wofi.nix
+    ./home-modules/helix.nix
   ]; # imports
 
   xdg.configFile."wpaperd/wallpaper.toml".source =
