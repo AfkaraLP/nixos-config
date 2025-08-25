@@ -63,6 +63,32 @@
           "default.clock.max-quantum" = 8192;
         };
       };
+      wireplumber.configPackages = [
+        (pkgs.writeTextDir
+          "share/wireplumber/wireplumber.conf.d/10-bluez.conf" ''
+            monitor.bluez.properties = {
+              bluez5.roles = [ a2dp_sink a2dp_source bap_sink bap_source hsp_hs hsp_ag hfp_hf hfp_ag ]
+              bluez5.codecs = [ sbc sbc_xq aac ldac aptx aptx_hd ]
+              bluez5.enable-msbc = true
+              bluez5.enable-sbc-xq = true
+              bluez5.hfphsp-backend = "native"
+            }
+          '')
+        (pkgs.writeTextDir "share/wireplumber/bluetooth.lua.d/50-a2dp.lua" ''
+          bluez_monitor.rules = {
+            {
+              matches = {
+                { { "device.name", "matches", "bluez_card.*" }, },
+              },
+              apply_properties = {
+                ["bluez5.auto-switch-profile"] = false,
+                ["bluez5.default.profile"] = "a2dp-sink",
+              },
+            },
+          }
+        '')
+      ];
+
     }; # pipewire
 
     pulseaudio.support32Bit = true;
