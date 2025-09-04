@@ -8,45 +8,43 @@
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
-    }; # home-manager 
+    }; # home-manager
 
-  }; # inputs 
+  }; # inputs
 
-  outputs = { self, nixpkgs, home-manager, unstable, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, unstable, ... }:
 
-  let
-    system = "x86_64-linux";
-  in
-  {
-    
-    nixosConfigurations = {
+    let
+      system = "x86_64-linux";
+      pkgs = import nixpkgs { inherit system; };
+    in {
 
-      nixos = nixpkgs.lib.nixosSystem {
+      nixosConfigurations = {
 
-        inherit system;
-        modules = [
-          ./configuration.nix
-      	  ./.hidden/boot_options.nix
+        nixos = nixpkgs.lib.nixosSystem {
 
-      	  home-manager.nixosModules.home-manager 
-      	  {
-      	    home-manager.useGlobalPkgs = true;
-      	    home-manager.useUserPackages = true;
-      	    home-manager.backupFileExtension = "backup";
+          inherit system;
+          modules = [
+            ./configuration.nix
+            ./.hidden/boot_options.nix
 
-      	    home-manager.users.afkara = import ./home.nix;
-            home-manager.extraSpecialArgs = {
-              unstablePkgs = import unstable {
-                system = system;
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.backupFileExtension = "backup";
+
+              home-manager.users.afkara = import ./home.nix;
+              home-manager.extraSpecialArgs = {
+                unstablePkgs = import unstable { inherit system; };
               };
-            };
 
-      	  }
-        ]; # modules 
-	
-      }; # nixpkgs.lib.nixosSystem 
+            }
+          ]; # modules
 
-    }; # nixosConfigurations 
+        }; # nixpkgs.lib.nixosSystem
 
-  }; # outputs 
+      }; # nixosConfigurations
+
+    }; # outputs
 }
