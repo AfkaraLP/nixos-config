@@ -115,6 +115,7 @@
       wl-clipboard
       easyeffects
       vesktop
+      bottom
       wayfreeze
       (prismlauncher.override {
         jdks = [ temurin-bin-21 temurin-bin-17 temurin-bin-8 ];
