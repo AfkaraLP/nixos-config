@@ -3,6 +3,11 @@
 {
   programs = {
 
+    direnv = {
+      enable = true;
+      enableNushellIntegration = true;
+    };
+
     nushell = {
       enable = true;
 
