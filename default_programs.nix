@@ -8,9 +8,19 @@
       capSysNice = true;
     };
 
-    hyprland =  {
+    hyprland = {
       enable = true;
       xwayland.enable = true;
+    };
+
+    regreet = {
+      enable = true;
+      settings = {
+        commands = { reboot = [ "systemctl" "reboot" ]; };
+        # background = {
+        #   path = ../../home/afkara/wallpapers/3354994-jacato-deggy-hybrid-mammal.jpg;
+        # };
+      };
     };
 
     steam = {
