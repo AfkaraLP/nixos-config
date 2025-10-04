@@ -13,6 +13,11 @@
       xwayland.enable = true;
     };
 
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+    };
+
     regreet = {
       enable = true;
       settings = {
