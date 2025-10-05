@@ -38,7 +38,7 @@
                   print id " " name
                 }
               ' \
-              | wofi --show dmenu --prompt "Select Sink:")
+              | fuzzel --dmenu --prompt "Select Sink:")
 
             if [ -n "$choice" ]; then
                 sink_id=$(echo "$choice" | awk '{print $1}')
