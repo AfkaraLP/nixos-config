@@ -16,7 +16,7 @@ in {
     ./home-modules/assets/fonts.nix
     ./home-modules/waybar.nix
     ./home-modules/assets/themes.nix
-    ./home-modules/wofi.nix
+    ./home-modules/fuzzel.nix
     ./home-modules/helix.nix
   ]; # imports
 
