@@ -2,6 +2,11 @@
 
 {
   programs = {
+    alvr = {
+      enable = true;
+      openFirewall = true;
+    };
+    adb.enable = true;
     gamemode.enable = true;
     gamescope = {
       enable = true;

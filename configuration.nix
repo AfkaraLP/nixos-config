@@ -29,6 +29,7 @@
   }; # users.users.afkara
 
   services = {
+    udev.packages = [ pkgs.via ];
     xserver = {
       xkb = {
         layout = "us";
@@ -105,6 +106,7 @@
       wl-clipboard
       easyeffects
       vesktop
+      via
       bottom
       wayfreeze
       (prismlauncher.override {
@@ -124,7 +126,7 @@
 
   hardware = {
     nvidia = {
-      open = true;
+      open = false;
       modesetting.enable = true;
       package = config.boot.kernelPackages.nvidiaPackages.latest;
       nvidiaSettings = true;
