@@ -23,7 +23,7 @@
     }; # iconTheme 
 
     font = {
-      name = "Monocraft";
+      name = "Fira Code";
       size = 11;
     }; # font 
   }; # gtk 
