@@ -7,14 +7,13 @@
         terminal = "${pkgs.wezterm}/bin/wezterm";
         layer = "overlay";
         icon-theme = "Papirus-Dark";
-        font = "JetBrainsMono Nerd Font:size=11";
+        font = "Fira Code:size=11";
         width = 50;
         horizontal-pad = 16;
         vertical-pad = 12;
         line-height = 24;
         prompt = "";
         fields = "name,generic";
-        fuzzy = true;
       };
 
       colors = {
