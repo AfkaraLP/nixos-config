@@ -19,16 +19,6 @@
     };
 
 
-    regreet = {
-      enable = true;
-      settings = {
-        commands = { reboot = [ "systemctl" "reboot" ]; };
-        # background = {
-        #   path = ../../home/afkara/wallpapers/3354994-jacato-deggy-hybrid-mammal.jpg;
-        # };
-      };
-    };
-
     steam = {
       enable = true;
       remotePlay.openFirewall = true;
