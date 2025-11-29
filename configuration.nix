@@ -94,7 +94,8 @@
       enable = true;
       settings = {
         default_session = {
-          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
+          command =
+            "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
           user = "greeter";
         };
       };
@@ -106,6 +107,11 @@
   system.stateVersion = "25.05"; # Did you read the comment?
 
   environment = {
+    etc."libinput/local-overrides.quirks".text = ''
+      [Never Debounce]
+      MatchUdevType=mouse
+      ModelBouncingKeys=1
+    '';
     systemPackages = with pkgs; [
       lunar-client
       killall
