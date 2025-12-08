@@ -6,6 +6,7 @@
     direnv = {
       enable = true;
       enableNushellIntegration = true;
+      silent = true;
     };
 
     nushell = {
