@@ -7,5 +7,6 @@
     fira-code
     monocraft
     jetbrains-mono
+    victor-mono
   ]; # fonts.packages
 }

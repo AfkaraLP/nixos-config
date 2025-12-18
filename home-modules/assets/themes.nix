@@ -23,7 +23,7 @@
     }; # iconTheme 
 
     font = {
-      name = "Fira Code";
+      name = "Victor Mono";
       size = 11;
     }; # font 
   }; # gtk 
