@@ -32,9 +32,9 @@
     ntp.enable = false;
     chrony.enable = true;
   }; # services
-  systemd.extraConfig = ''
-    DefaultTimeoutStopSec=10s
-  '';
+  # systemd.extraConfig = ''
+  #   DefaultTimeoutStopSec=10s
+  # '';
   ### BOOT
 
     boot = {

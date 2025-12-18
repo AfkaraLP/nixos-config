@@ -128,7 +128,7 @@
       (prismlauncher.override {
         jdks = [ temurin-bin-21 temurin-bin-17 temurin-bin-8 ];
         additionalPrograms = [ ffmpeg ];
-        additionalLibs = [ pkgs.glfw-wayland ];
+        additionalLibs = [ pkgs.glfw ];
       })
       mangohud
     ]; # systemPackages
