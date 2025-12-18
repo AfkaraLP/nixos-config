@@ -17,7 +17,7 @@ in {
     package = unstablePkgs.helix;
     enable = true;
     settings = {
-      theme = "base16_transparent";
+      theme = "term16_dark";
       editor = {
         soft-wrap.enable = true;
         line-number = "relative";
