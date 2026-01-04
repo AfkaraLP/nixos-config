@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-25.11";
     unstable.url = "nixpkgs/nixos-unstable";
+    oldpkgs.url = "nixpkgs/nixos-25.05";
 
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
@@ -12,7 +13,7 @@
 
   }; # inputs
 
-  outputs = { self, nixpkgs, home-manager, unstable, ... }:
+  outputs = { self, nixpkgs, home-manager, unstable, oldpkgs, ... }:
 
     let
       system = "x86_64-linux";
@@ -24,6 +25,13 @@
         nixos = nixpkgs.lib.nixosSystem {
 
           inherit system;
+          specialArgs = {
+            oldpkgs = import oldpkgs {
+              inherit system;
+              config.allowUnfree = true;
+            };
+          };
+          
           modules = [
             ./configuration.nix
             ./.hidden/boot_options.nix

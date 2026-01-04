@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, unstable, ... }:
+{ config, pkgs, lib, oldpkgs, ... }:
 
 {
   imports = [ # Include the results of the hardware scan.
@@ -121,7 +121,7 @@
       sway-contrib.grimshot
       wl-clipboard
       easyeffects
-      vesktop
+      oldpkgs.vesktop
       via
       bottom
       wayfreeze
