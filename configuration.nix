@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, oldpkgs, ... }:
+{ config, pkgs, lib, oldpkgs, newpkgs, ... }:
 
 {
   imports = [ # Include the results of the hardware scan.
@@ -29,6 +29,7 @@
   }; # users.users.afkara
 
   services = {
+    flatpak.enable = true;
     udev.packages = [ pkgs.via ];
     xserver = {
       xkb = {
@@ -113,6 +114,7 @@
       ModelBouncingKeys=1
     '';
     systemPackages = with pkgs; [
+      opencode
       lunar-client
       killall
       nixd
@@ -121,7 +123,7 @@
       sway-contrib.grimshot
       wl-clipboard
       easyeffects
-      oldpkgs.vesktop
+      vesktop
       bitwig-studio
       via
       bottom
