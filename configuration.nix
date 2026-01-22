@@ -114,7 +114,6 @@
       ModelBouncingKeys=1
     '';
     systemPackages = with pkgs; [
-      opencode
       lunar-client
       killall
       nixd
@@ -134,6 +133,7 @@
         additionalLibs = [ pkgs.glfw ];
       })
       mangohud
+      newpkgs.opencode
     ]; # systemPackages
 
     variables = {
