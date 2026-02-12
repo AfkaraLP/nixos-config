@@ -48,6 +48,14 @@
       alsa.support32Bit = true;
       pulse.enable = true;
       extraConfig.pipewire = {
+        "10-low-latency-fix" = {
+          "context.properties" = {
+            "default.clock.rate" = 48000;
+            "default.clock.quantum" = 512;
+            "default.clock.min-quantum" = 256;
+            "default.clock.max-quantum" = 1024;
+          };
+        };
         "context.properties" = {
           "default.clock.allowed-rates" = [ 44100 48000 96000 ];
           "default.clock.quantum" = 2048;
@@ -95,8 +103,7 @@
       enable = true;
       settings = {
         default_session = {
-          command =
-            "${pkgs.tuigreet}/bin/tuigreet --time --cmd Hyprland";
+          command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd Hyprland";
           user = "greeter";
         };
       };
