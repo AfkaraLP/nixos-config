@@ -47,20 +47,12 @@
       alsa.enable = true;
       alsa.support32Bit = true;
       pulse.enable = true;
-      extraConfig.pipewire = {
-        "10-low-latency-fix" = {
-          "context.properties" = {
-            "default.clock.rate" = 48000;
-            "default.clock.quantum" = 512;
-            "default.clock.min-quantum" = 256;
-            "default.clock.max-quantum" = 1024;
-          };
-        };
+      extraConfig.pipewire."92-low-latency" = {
         "context.properties" = {
-          "default.clock.allowed-rates" = [ 44100 48000 96000 ];
-          "default.clock.quantum" = 2048;
-          "default.clock.min-quantum" = 2048;
-          "default.clock.max-quantum" = 8192;
+          "default.clock.rate" = 48000;
+          "default.clock.quantum" = 1024;
+          "default.clock.min-quantum" = 1024;
+          "default.clock.max-quantum" = 2048;
         };
       };
       wireplumber = {

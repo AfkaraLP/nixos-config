@@ -2,6 +2,7 @@
 
 {
   programs = {
+    zellij.enable = true;
 
     direnv = {
       enable = true;
