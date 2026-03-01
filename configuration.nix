@@ -15,6 +15,7 @@
     hostName = "nixos"; # Define your hostname.
     networkmanager.enable = true;
     dhcpcd.wait = "background";
+    nameservers = [ "1.1.1.1" "9.9.9.9" ];
   }; # networking
 
   time.timeZone = "Europe/Berlin";
@@ -29,6 +30,7 @@
   }; # users.users.afkara
 
   services = {
+    tailscale = { enable = true; };
     flatpak.enable = true;
     udev.packages = [ pkgs.via ];
     xserver = {
