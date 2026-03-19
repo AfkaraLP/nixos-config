@@ -24,6 +24,7 @@
 
       extraEnv = ''
           $env.EDITOR = 'hx'
+          $env.PATH = ($env.PATH | append /home/afkara/.cargo/bin)
         '';
 
     };
