@@ -125,7 +125,7 @@
       easyeffects
       vesktop
       bitwig-studio
-      via
+      lmstudio
       bottom
       wayfreeze
       (prismlauncher.override {
