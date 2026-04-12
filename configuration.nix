@@ -125,6 +125,7 @@
       wl-clipboard
       easyeffects
       vesktop
+      jujutsu
       bitwig-studio
       lmstudio
       bottom
