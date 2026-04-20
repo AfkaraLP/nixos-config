@@ -126,7 +126,6 @@
       easyeffects
       vesktop
       jujutsu
-      bitwig-studio
       lmstudio
       bottom
       wayfreeze
