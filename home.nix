@@ -18,6 +18,7 @@ in {
     ./home-modules/assets/themes.nix
     ./home-modules/fuzzel.nix
     ./home-modules/helix.nix
+    ./home-modules/spicetify.nix
   ]; # imports
 
   xdg.configFile."wpaperd/wallpaper.toml".source =
