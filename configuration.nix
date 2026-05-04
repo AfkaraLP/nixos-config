@@ -115,6 +115,7 @@
       ModelBouncingKeys=1
     '';
     systemPackages = with pkgs; [
+      tldr
       tesseract
       lunar-client
       killall
