@@ -14,7 +14,7 @@
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
   }; # inputs
 
-  outputs = { self, nixpkgs, home-manager, unstable, oldpkgs, ... }:
+  outputs = { self, nixpkgs, home-manager, unstable, oldpkgs, ... }@inputs:
 
     let
       system = "x86_64-linux";
@@ -27,6 +27,7 @@
 
           inherit system;
           specialArgs = {
+            inherit inputs;
             oldpkgs = import oldpkgs {
               inherit system;
               config.allowUnfree = true;
@@ -37,7 +38,7 @@
             };
           };
 
-          modules = with self.inputs; [
+          modules = [
             ./configuration.nix
             ./.hidden/boot_options.nix
 
@@ -48,8 +49,8 @@
               home-manager.backupFileExtension = "backup";
 
               home-manager.users.afkara.imports =
-                [ ./home.nix spicetify-nix.homeManagerModules.default ];
-              home-manager.extraSpecialArgs = with self; {
+                [ ./home.nix inputs.spicetify-nix.homeManagerModules.default ];
+              home-manager.extraSpecialArgs = {
                 inherit inputs;
                 unstablePkgs = import unstable { inherit system; };
               };
