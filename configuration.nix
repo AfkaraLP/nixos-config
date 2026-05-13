@@ -30,6 +30,13 @@
   }; # users.users.afkara
 
   services = {
+    saned.enable = false;
+    avahi = {
+      enable = true;
+      nssmdns4 = true;
+      nssmdns6 = true;
+      openFirewall = true;
+    };
     tailscale = { enable = true; };
     flatpak.enable = true;
     udev.packages = [ pkgs.via ];
@@ -114,7 +121,14 @@
       MatchUdevType=mouse
       ModelBouncingKeys=1
     '';
+  etc."sane.d/dll.conf".text = ''
+    genesys
+    v4l
+    net  
+    pixma
+  '';
     systemPackages = with pkgs; [
+      usbutils
       tldr
       tesseract
       lunar-client
@@ -128,6 +142,8 @@
       vesktop
       jujutsu
       lmstudio
+      sane-backends
+      simple-scan
       bottom
       wayfreeze
       (prismlauncher.override {
@@ -140,6 +156,7 @@
     ]; # systemPackages
 
     variables = {
+      SANE_CONFIG_DIR = lib.mkForce "/run/current-system/sw/etc/sane.d";
       NIXOS_OZONE_WL = "1";
       GBM_BACKEND = "nvidia-drm";
       __GLX_VENDOR_LIBRARY_NAME = "nvidia";
@@ -147,6 +164,10 @@
   }; # environment
 
   hardware = {
+    sane = {
+      enable = true;
+      extraBackends = with pkgs; [ hplip sane-airscan sane-backends ];
+    };
     nvidia = {
       open = false;
       modesetting.enable = true;
