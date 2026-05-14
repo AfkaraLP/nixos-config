@@ -25,7 +25,7 @@
   users.users.afkara = {
     isNormalUser = true;
     description = "afkara";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "scanner" "lp" ];
     packages = with pkgs; [ ];
   }; # users.users.afkara
 
@@ -39,7 +39,7 @@
     };
     tailscale = { enable = true; };
     flatpak.enable = true;
-    udev.packages = [ pkgs.via ];
+    udev.packages = with pkgs; [ via sane-backends ];
     xserver = {
       xkb = {
         layout = "us";
@@ -121,12 +121,6 @@
       MatchUdevType=mouse
       ModelBouncingKeys=1
     '';
-  etc."sane.d/dll.conf".text = ''
-    genesys
-    v4l
-    net  
-    pixma
-  '';
     systemPackages = with pkgs; [
       usbutils
       tldr
@@ -156,7 +150,6 @@
     ]; # systemPackages
 
     variables = {
-      SANE_CONFIG_DIR = lib.mkForce "/run/current-system/sw/etc/sane.d";
       NIXOS_OZONE_WL = "1";
       GBM_BACKEND = "nvidia-drm";
       __GLX_VENDOR_LIBRARY_NAME = "nvidia";
