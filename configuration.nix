@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, oldpkgs, newpkgs, inputs, ... }:
+{ config, pkgs, ... }:
 
 {
   imports = [ # Include the results of the hardware scan.
@@ -146,13 +146,15 @@
         additionalLibs = [ pkgs.glfw ];
       })
       mangohud
-      newpkgs.opencode
+      opencode
     ]; # systemPackages
 
     variables = {
       NIXOS_OZONE_WL = "1";
       GBM_BACKEND = "nvidia-drm";
       __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+      NVD_BACKEND = "direct";
+      LIBVA_DRIVER_NAME = "nvidia";
     }; # variables
   }; # environment
 

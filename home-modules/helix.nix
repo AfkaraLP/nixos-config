@@ -1,4 +1,4 @@
-{ config, pkgs, lib, unstablePkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
   helix-lsp-config = {
     language-server.rust-analyzer.config = { checkOnSave.allTargets = true; };
@@ -14,7 +14,6 @@ let
 in {
 
   programs.helix = {
-    package = unstablePkgs.helix;
     enable = true;
     settings = {
       theme = "term16_dark";
@@ -24,9 +23,7 @@ in {
         shell = [ "nu" "--stdin" "-c" ];
         lsp.display-messages = true;
 
-        indent-guides = {
-          render = true;
-        };
+        indent-guides = { render = true; };
 
         cursor-shape = {
           insert = "bar";

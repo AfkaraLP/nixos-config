@@ -2,19 +2,17 @@
   description = "A very basic flake";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-25.11";
-    unstable.url = "nixpkgs/nixos-unstable";
-    oldpkgs.url = "nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     }; # home-manager
 
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
   }; # inputs
 
-  outputs = { self, nixpkgs, home-manager, unstable, oldpkgs, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, ... }@inputs:
 
     let
       system = "x86_64-linux";
@@ -28,14 +26,6 @@
           inherit system;
           specialArgs = {
             inherit inputs;
-            oldpkgs = import oldpkgs {
-              inherit system;
-              config.allowUnfree = true;
-            };
-            newpkgs = import unstable {
-              inherit system;
-              config.allowUnfree = true;
-            };
           };
 
           modules = [
@@ -50,10 +40,7 @@
 
               home-manager.users.afkara.imports =
                 [ ./home.nix inputs.spicetify-nix.homeManagerModules.default ];
-              home-manager.extraSpecialArgs = {
-                inherit inputs;
-                unstablePkgs = import unstable { inherit system; };
-              };
+              home-manager.extraSpecialArgs = { inherit inputs; };
 
             }
           ]; # modules
