@@ -133,7 +133,7 @@
       sway-contrib.grimshot
       wl-clipboard
       easyeffects
-      vesktop
+      discord
       jujutsu
       lmstudio
       sane-backends
