@@ -16,6 +16,12 @@
         modules-right = [ "wireplumber" "clock" ];
 
         wireplumber = {
+          configPackages = [
+            (pkgs.writeTextDir
+              "share/wireplumber/wireplumber.conf.d/11-bluetooth-policy.conf" ''
+                wireplumber.settings = { bluetooth.autoswitch-to-headset-profile = false }
+              '')
+          ];
           format = "{volume}%";
           format-muted = "ded";
           on-click = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";

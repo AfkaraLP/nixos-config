@@ -25,7 +25,7 @@
   users.users.afkara = {
     isNormalUser = true;
     description = "afkara";
-    extraGroups = [ "networkmanager" "wheel" "scanner" "lp" ];
+    extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "dialout" ];
     packages = with pkgs; [ ];
   }; # users.users.afkara
 
@@ -122,6 +122,7 @@
       ModelBouncingKeys=1
     '';
     systemPackages = with pkgs; [
+      bat
       usbutils
       tldr
       tesseract
