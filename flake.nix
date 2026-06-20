@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    ki-editor.url = "github:ki-editor/ki-editor";
     home-manager = {
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -12,7 +13,7 @@
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
   }; # inputs
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, ki-editor, ... }@inputs:
 
     let
       system = "x86_64-linux";
