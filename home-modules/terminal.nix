@@ -1,6 +1,7 @@
 { config, pkgs, lib, unstablePkgs, ... }:
 
-{
+let devenvHook = "${pkgs.devenv}/bin/devenv hook nu";
+in {
   programs = {
     zellij.enable = true;
 
@@ -23,9 +24,12 @@
       settings = { show_banner = false; };
 
       extraEnv = ''
-          $env.EDITOR = 'hx'
-          $env.PATH = ($env.PATH | append /home/afkara/.cargo/bin)
-        '';
+        mkdir ($nu.data-dir | path join "vendor/autoload/")
+        ${devenvHook} | save -f ($nu.data-dir | path join 'vendor/autoload/devenv.nu')
+        source ($nu.data-dir | path join 'vendor/autoload/devenv.nu') 
+        $env.EDITOR = 'hx'
+        $env.PATH = ($env.PATH | append /home/afkara/.cargo/bin)
+      '';
 
     };
 

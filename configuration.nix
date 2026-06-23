@@ -132,7 +132,7 @@
       lunar-client
       killall
       nixd
-      nixfmt-classic
+      nixfmt
       dconf
       sway-contrib.grimshot
       wl-clipboard
