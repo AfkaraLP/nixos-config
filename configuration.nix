@@ -122,6 +122,7 @@
       ModelBouncingKeys=1
     '';
     systemPackages = with pkgs; [
+      devenv
       proton-vpn-cli
       bat
       inputs.ki-editor.packages.x86_64-linux.default
