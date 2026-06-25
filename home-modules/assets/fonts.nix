@@ -7,6 +7,7 @@
     fira-code
     monocraft
     jetbrains-mono
-    victor-mono
+    # victor-mono
+    nerd-fonts.victor-mono
   ]; # fonts.packages
 }

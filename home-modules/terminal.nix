@@ -47,7 +47,7 @@ in {
             config.default_prog = { "nu" }
 
             config.color_scheme = 'Catppuccin Mocha'
-         	  config.font = wezterm.font('Victor Mono', { weight = 'Bold' })
+         	  config.font = wezterm.font('VictorMono Nerd Font', { weight = 'Bold' })
             config.font_size = 12.0
             config.hide_tab_bar_if_only_one_tab = true
             config.window_background_opacity = 0.5
