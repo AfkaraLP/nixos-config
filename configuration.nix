@@ -122,6 +122,7 @@
       ModelBouncingKeys=1
     '';
     systemPackages = with pkgs; [
+      nvitop
       devenv
       proton-vpn-cli
       bat
