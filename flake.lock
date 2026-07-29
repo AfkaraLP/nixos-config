@@ -173,6 +173,22 @@
     },
     "nixpkgs_3": {
       "locked": {
+        "lastModified": 1779560665,
+        "narHash": "sha256-tpyBcxPpcQb8ukyNF7DoCwfSY3VPsxHoYwj00Cayv5o=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "64c08a7ca051951c8eae34e3e3cb1e202fe36786",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_4": {
+      "locked": {
         "lastModified": 1782467914,
         "narHash": "sha256-inDx/w70OSJoJPqtKh0BrzAsbZZhpya7YgS43jHnhwg=",
         "rev": "e73de5be04e0eff4190a1432b946d469c794e7b4",
@@ -184,11 +200,30 @@
         "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz"
       }
     },
+    "omp-flake": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_3"
+      },
+      "locked": {
+        "lastModified": 1782402532,
+        "narHash": "sha256-l6ij6KNtHEpTsMeSzay7cnmQ4ZShbsGGvzdjuLgje+w=",
+        "owner": "cernoh",
+        "repo": "omp-flake",
+        "rev": "376ab5f445d4c8bc3f29c9b9971a159f4ebe3883",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cernoh",
+        "repo": "omp-flake",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "home-manager": "home-manager",
         "ki-editor": "ki-editor",
         "nixpkgs": "nixpkgs_2",
+        "omp-flake": "omp-flake",
         "spicetify-nix": "spicetify-nix"
       }
     },
@@ -232,7 +267,7 @@
     },
     "spicetify-nix": {
       "inputs": {
-        "nixpkgs": "nixpkgs_3",
+        "nixpkgs": "nixpkgs_4",
         "systems": "systems_2"
       },
       "locked": {

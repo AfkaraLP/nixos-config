@@ -126,6 +126,7 @@
       proton-vpn-cli
       bat
       inputs.ki-editor.packages.x86_64-linux.default
+      inputs.omp-flake.packages.x86_64-linux.default
       usbutils
       tldr
       tesseract

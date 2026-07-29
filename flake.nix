@@ -11,9 +11,11 @@
     }; # home-manager
 
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
+
+    omp-flake.url = "github:cernoh/omp-flake";
   }; # inputs
 
-  outputs = { self, nixpkgs, home-manager, ki-editor, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, ki-editor, omp-flake, ... }@inputs:
 
     let
       system = "x86_64-linux";
