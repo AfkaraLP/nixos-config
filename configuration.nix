@@ -126,6 +126,7 @@
       devenv
       proton-vpn-cli
       bat
+      inputs.glide-browser.packages.x86_64-linux.default
       inputs.ki-editor.packages.x86_64-linux.default
       inputs.omp-flake.packages.x86_64-linux.default
       usbutils

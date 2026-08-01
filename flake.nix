@@ -10,12 +10,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     }; # home-manager
 
+    glide-browser.url = "github:glide-browser/glide.nix";
+
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
 
     omp-flake.url = "github:cernoh/omp-flake";
   }; # inputs
 
-  outputs = { self, nixpkgs, home-manager, ki-editor, omp-flake, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, ki-editor, omp-flake, glide-browser, ... }@inputs:
 
     let
       system = "x86_64-linux";
