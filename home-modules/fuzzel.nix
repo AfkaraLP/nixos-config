@@ -1,4 +1,7 @@
 { config, pkgs, lib, ... }: {
+  programs.vicinae = {
+    enable = true;
+  };
   programs.fuzzel = {
     enable = true;
     settings = {
