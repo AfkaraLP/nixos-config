@@ -51,6 +51,7 @@ in
     networkmanager.enable = true;
     dhcpcd.wait = "background";
     nameservers = [ "1.1.1.1" "9.9.9.9" ];
+    firewall.allowedTCPPorts = [ 1234 ]; # LM Studio LAN API
   }; # networking
 
   time.timeZone = "Europe/Berlin";
