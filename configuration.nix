@@ -149,7 +149,7 @@ in
 
   nixpkgs.config.allowUnfree = true;
 
-  system.stateVersion = "25.11"; # Did you read the comment?
+  system.stateVersion = "24.11";
 
   environment = {
     etc."libinput/local-overrides.quirks".text = ''
