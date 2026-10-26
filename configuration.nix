@@ -43,7 +43,6 @@ in
 {
   imports = [ # Include the results of the hardware scan.
     ./.hidden/hardware-configuration.nix
-    ./.hidden/systemd_services.nix
     ./default_programs.nix
   ];
 
@@ -242,16 +241,13 @@ in
   nix = {
     gc = {
       automatic = true;
-      options = "--delete-older-than 7d";
+      dates = "weekly";
+      options = "--delete-older-than 30d";
     };
     settings = {
       auto-optimise-store = true;
       cores = 6;
       experimental-features = [ "nix-command" "flakes" ];
-    };
-    optimise = {
-      automatic = true;
-      dates = [ "03:45" ];
     };
   };
 } # END
