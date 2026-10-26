@@ -13,6 +13,7 @@ in {
 
     nushell = {
       enable = true;
+      loadSessionVariables = true;
 
       shellAliases = {
         nrs = "sudo nixos-rebuild switch";

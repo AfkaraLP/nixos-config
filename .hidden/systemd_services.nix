@@ -1,10 +1,6 @@
-{ config, lib, pkgs, ... }:
+{ config, ... }:
 
 {
-  environment.etc."nix-gc-on-shutdown.sh".text = ''
-    #!/bin/sh
-    /nix/store/your-real-path-to-nix-collect-garbage --delete-older-than 3d
-  '';
 
   systemd.services.nix-gc-on-shutdown = {
     description = "Run Nix garbage collection on shutdown";
@@ -12,7 +8,7 @@
     before = [ "shutdown.target" ];
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "/etc/nix-gc-on-shutdown.sh";
+      ExecStart = "${config.nix.package}/bin/nix-collect-garbage --delete-older-than 3d";
     };
   };
 }
