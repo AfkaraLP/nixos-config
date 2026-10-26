@@ -75,6 +75,7 @@ in
     };
     tailscale = { enable = true; };
     flatpak.enable = true;
+    fwupd.enable = true;
     udev.packages = with pkgs; [ via sane-backends ];
     xserver = {
       xkb = {
