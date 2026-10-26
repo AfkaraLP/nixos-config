@@ -12,6 +12,7 @@
 
   gtk = {
     enable = true;
+    gtk4.theme = config.gtk.theme;
 
     theme = {
       package = pkgs.flat-remix-gtk;
