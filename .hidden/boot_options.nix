@@ -33,6 +33,12 @@
 
   # Boot optimizations
   boot = {
+    # Steam Frame's 28de:2432 adapter needs the in-tree rtw89_8852cu driver.
+    kernelPackages = pkgs.linuxPackages_7_2;
+    extraModprobeConfig = ''
+      options cfg80211 ieee80211_regdom=DE
+    '';
+
     loader = {
       systemd-boot.configurationLimit = 10;
       systemd-boot.enable = true;

@@ -15,11 +15,14 @@
     hyprland = {
       enable = true;
       xwayland.enable = true;
+      withUWSM = true;
     };
 
 
     steam = {
       enable = true;
+      # Wayland capture is required over both LAN Wi-Fi and the Frame adapter.
+      package = pkgs.steam.override { extraArgs = "-pipewire"; };
       remotePlay.openFirewall = true;
     };
 

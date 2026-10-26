@@ -141,7 +141,7 @@ in
       enable = true;
       settings = {
         default_session = {
-          command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd start-hyprland";
+          command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd 'uwsm start -e -D Hyprland hyprland.desktop'";
           user = "greeter";
         };
       };
@@ -167,6 +167,7 @@ in
       omp
       claude-code
       usbutils
+      iw
       tldr
       tesseract
       lunar-client
