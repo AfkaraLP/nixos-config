@@ -4,6 +4,42 @@
 
 { config, pkgs, inputs, ... }:
 
+let
+  omp = pkgs.stdenvNoCC.mkDerivation {
+    pname = "omp";
+    version = "18.13.0";
+
+    src = pkgs.fetchurl {
+      url = "https://github.com/can1357/oh-my-pi/releases/download/v18.13.0/omp-linux-x64";
+      hash = "sha256-eG9fdlIHnZciR+MRK6qoKOyHqufEw+rSDpl7e0yZ2V8=";
+    };
+
+    dontUnpack = true;
+    installPhase = ''
+      install -Dm755 "$src" "$out/libexec/omp"
+      mkdir -p "$out/bin"
+      cat > "$out/bin/omp" <<EOF
+      #!${pkgs.runtimeShell}
+      exec ${pkgs.stdenv.cc.bintools.dynamicLinker} \
+        --library-path "${pkgs.lib.makeLibraryPath [
+          pkgs.stdenv.cc.cc.lib
+          pkgs.glibc
+          pkgs.openssl
+          pkgs.zlib
+        ]}" \
+        "$out/libexec/omp" "\$@"
+      EOF
+      chmod 755 "$out/bin/omp"
+    '';
+
+    dontPatchELF = true;
+    dontStrip = true;
+    doInstallCheck = true;
+    installCheckPhase = ''
+      HOME="$TMPDIR" "$out/bin/omp" --version
+    '';
+  };
+in
 {
   imports = [ # Include the results of the hardware scan.
     ./.hidden/hardware-configuration.nix
@@ -127,8 +163,8 @@
       proton-vpn-cli
       bat
       inputs.glide-browser.packages.x86_64-linux.default
-      inputs.ki-editor.packages.x86_64-linux.default
-      inputs.omp-flake.packages.x86_64-linux.default
+      omp
+      claude-code
       usbutils
       tldr
       tesseract
@@ -200,7 +236,6 @@
 
   xdg.portal = {
     enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
     configPackages = [ pkgs.hyprland ];
   }; # xdg.portal
 
