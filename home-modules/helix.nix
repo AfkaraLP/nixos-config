@@ -4,11 +4,11 @@ let
     language-server.rust-analyzer.config = { checkOnSave.allTargets = true; };
     language-server.nixd = {
       command = "nixd";
-      formatting = { command = [ "alejandra" ]; };
+      formatting = { command = [ "nixfmt" ]; };
       nixpkgs.expr =
         ''import (builtins.getFlake "/etc/nixos").inputs.nixpkgs { }'';
       options.nixos.expr =
-        ''(builtins.getFlake "/etc/nixos").nixosConfigurations.bld0.options'';
+        ''(builtins.getFlake "/etc/nixos").nixosConfigurations.nixos.options'';
     };
   };
 in {
