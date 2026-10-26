@@ -39,8 +39,7 @@
       efi.canTouchEfiVariables = true;
     };
 
-    kernelParams =
-      [ "rootflags=ro" "fsck.mode=skip" "amd_pstate=active" "quiet" ];
+    kernelParams = [ "rootflags=ro" "amd_pstate=active" "quiet" ];
 
     initrd = {
       compressor = "zstd";
