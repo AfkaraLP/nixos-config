@@ -48,7 +48,13 @@ in
 
   networking = {
     hostName = "nixos"; # Define your hostname.
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      settings.connection-wake-on-lan = {
+        match-device = "interface-name:enp34s0";
+        "ethernet.wake-on-lan" = 64; # Magic packets only.
+      };
+    };
     dhcpcd.wait = "background";
     nameservers = [ "1.1.1.1" "9.9.9.9" ];
     firewall.allowedTCPPorts = [ 1234 ]; # LM Studio LAN API
