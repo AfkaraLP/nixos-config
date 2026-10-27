@@ -19,6 +19,7 @@ in {
     ./home-modules/fuzzel.nix
     ./home-modules/helix.nix
     ./home-modules/spicetify.nix
+    ./home-modules/discord.nix
   ]; # imports
 
   xdg.configFile."wpaperd/wallpaper.toml".source =

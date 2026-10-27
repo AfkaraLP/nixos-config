@@ -13,6 +13,8 @@
 
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
 
+    nixcord.url = "github:kaylorben/nixcord";
+
   }; # inputs
 
   outputs = { self, nixpkgs, home-manager, glide-browser, ... }@inputs:
@@ -42,7 +44,11 @@
               home-manager.backupFileExtension = "backup";
 
               home-manager.users.afkara.imports =
-                [ ./home.nix inputs.spicetify-nix.homeManagerModules.default ];
+                [
+                  ./home.nix
+                  inputs.spicetify-nix.homeManagerModules.default
+                  inputs.nixcord.homeModules.nixcord
+                ];
               home-manager.extraSpecialArgs = { inherit inputs; };
 
             }

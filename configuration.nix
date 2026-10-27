@@ -184,7 +184,6 @@ in
       sway-contrib.grimshot
       wl-clipboard
       easyeffects
-      discord
       jujutsu
       lmstudio
       sane-backends
