@@ -32,5 +32,21 @@
 
   }; # programs
 
+  # Wayland desktop overlay; SteamVR's built-in desktop view is unreliable.
+  environment.systemPackages = [
+    (pkgs.symlinkJoin {
+      name = "wayvr-steamvr";
+      paths = [ pkgs.wayvr ];
+      nativeBuildInputs = [ pkgs.makeWrapper ];
+      postBuild = ''
+        rm "$out/bin/wayvr"
+        makeWrapper ${lib.getExe pkgs.steam-run} "$out/bin/wayvr" \
+          --add-flags "${lib.getExe pkgs.wayvr} --openvr"
+      '';
+    })
+  ];
+  hardware.uinput.enable = true;
+  users.users.afkara.extraGroups = [ "uinput" ];
+
 }
 
