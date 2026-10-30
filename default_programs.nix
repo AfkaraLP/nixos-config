@@ -32,8 +32,9 @@
 
   }; # programs
 
-  # Wayland desktop overlay; SteamVR's built-in desktop view is unreliable.
   environment.systemPackages = [
+    pkgs.bs-manager
+    # Wayland desktop overlay; SteamVR's built-in desktop view is unreliable.
     (pkgs.symlinkJoin {
       name = "wayvr-steamvr";
       paths = [ pkgs.wayvr ];

@@ -24,6 +24,17 @@ in {
 
   xdg.configFile."wpaperd/wallpaper.toml".source =
     (pkgs.formats.toml { }).generate "wallpaper_config_afkara" wallpaperConfig;
+
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "x-scheme-handler/bsmanager" = [ "BSManager.desktop" ];
+      "x-scheme-handler/beatsaver" = [ "BSManager.desktop" ];
+      "x-scheme-handler/bsplaylist" = [ "BSManager.desktop" ];
+      "x-scheme-handler/modelsaber" = [ "BSManager.desktop" ];
+      "x-scheme-handler/web+bsmap" = [ "BSManager.desktop" ];
+    };
+  };
   services = {
     wpaperd = {
       enable = true;
