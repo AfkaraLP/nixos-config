@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 let
   wallpaperConfig = {
     default = {
@@ -24,6 +24,11 @@ in {
 
   xdg.configFile."wpaperd/wallpaper.toml".source =
     (pkgs.formats.toml { }).generate "wallpaper_config_afkara" wallpaperConfig;
+
+  # Use SteamVR's live manifest so OpenXR follows Steam-managed runtime updates.
+  xdg.configFile."openxr/1/active_runtime.json".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/.local/share/Steam/steamapps/common/SteamVR/steamxr_linux64.json";
 
   xdg.mimeApps = {
     enable = true;

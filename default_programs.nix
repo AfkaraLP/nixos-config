@@ -33,7 +33,21 @@
   }; # programs
 
   environment.systemPackages = [
-    pkgs.bs-manager
+    (pkgs.bs-manager.overrideAttrs (old: {
+      postPatch = (old.postPatch or "") + ''
+        # Current Steam clients no longer run steam-runtime-launcher-service.
+        substituteInPlace src/main/services/steam.service.ts \
+          --replace-fail 'getProcessId, isProcessRunning' 'bsmExec, getProcessId, isProcessRunning' \
+          --replace-fail 'const steamProcessRunning = await isProcessRunning(SteamService.PROCESS_NAME);' \
+            'const steamProcessRunning = process.platform === "linux" ? !!(await this.getSteamPid()) : await isProcessRunning(SteamService.PROCESS_NAME);' \
+          --replace-fail 'return getProcessId(SteamService.PROCESS_NAME);' \
+            'if (process.platform === "linux") {
+                const result = await bsmExec(`pgrep -o -u ''${process.getuid!()} -x steam`).catch(() => null);
+                return result ? Number(result.stdout) : 0;
+            }
+            return getProcessId(SteamService.PROCESS_NAME);'
+      '';
+    }))
     # Wayland desktop overlay; SteamVR's built-in desktop view is unreliable.
     (pkgs.symlinkJoin {
       name = "wayvr-steamvr";
