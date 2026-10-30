@@ -61,7 +61,8 @@
     })
   ];
   hardware.uinput.enable = true;
-  users.users.afkara.extraGroups = [ "uinput" ];
+  # Vicinae snippets read keyboard events and inject replacement text.
+  users.users.afkara.extraGroups = [ "input" "uinput" ];
 
 }
 
