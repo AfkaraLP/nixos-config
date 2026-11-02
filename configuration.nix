@@ -64,6 +64,8 @@ in
 
   i18n.defaultLocale = "en_US.UTF-8";
 
+  security.rtkit.enable = true;
+
   users.users.afkara = {
     isNormalUser = true;
     description = "afkara";
