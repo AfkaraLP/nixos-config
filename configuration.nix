@@ -92,8 +92,6 @@ in
       videoDrivers = [ "nvidia" ];
     }; # xserver
 
-    getty.autologinUser = "afkara";
-
     pipewire = {
       enable = true;
       alsa.enable = true;
