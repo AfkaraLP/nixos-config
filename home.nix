@@ -78,6 +78,10 @@ in {
     settings.StartupWMClass = "fl64.exe";
   };
 
+  # Imported by Hyprland's config/rules.lua; keep the Wine owner out of focus.
+  xdg.configFile."hypr/config/fl-studio.lua".source =
+    ./home-modules/assets/fl-studio.lua;
+
   xdg.configFile."wpaperd/wallpaper.toml".source =
     (pkgs.formats.toml { }).generate "wallpaper_config_afkara" wallpaperConfig;
 
