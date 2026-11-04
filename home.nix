@@ -23,6 +23,9 @@ let
     runtimeInputs = [ pkgs.coreutils flStudioRuntime ];
     text = ''
       export WINEPREFIX="''${XDG_DATA_HOME:-$HOME/.local/share}/fl-studio"
+      # Leftover winedevice.exe stops reading the system bus but stays connected;
+      # its queued signals exhaust the per-user quota and crash steamwebhelper.
+      export DBUS_SYSTEM_BUS_ADDRESS=unix:path=/dev/null
       # Store timestamps cannot identify Wine upgrades reliably.
       if [[ ! -f "$WINEPREFIX/.fl-studio-runtime" ]] ||
          [[ "$(< "$WINEPREFIX/.fl-studio-runtime")" != "${flStudioWine}" ]]; then
