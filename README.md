@@ -8,3 +8,7 @@ My Nixos Config for the system I daily drive.
 To set up your wallpaper put images in ~/wallpapers.
 
 ![Desktop Screenshot](./assets/screenshot.png)
+
+## Update notes
+
+The `opencode` override in `configuration.nix` backports the [upstream dependency hash fix](https://github.com/NixOS/nixpkgs/commit/c399e1b7fb90789e3e032784ef8ad98ba9907169). Remove it once the locked nixos-unstable revision includes that fix.
