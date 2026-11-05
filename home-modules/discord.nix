@@ -1,6 +1,12 @@
 { lib, options, pkgs, ... }:
 
 let
+  # OpenH264 can decode frames successfully but corrupt their contents.
+  # Keep the FFmpeg-backed decoder pinned until Discord fixes that path.
+  discordCodec = pkgs.callPackage ./discord-codec.nix {
+    discord = options.programs.nixcord.discord.package.default;
+  };
+
   # Glide uses a separately pinned nixpkgs; Discord's libraries break its XPCOM.
   discordXdgOpen = pkgs.writeShellScriptBin "xdg-open" ''
     unset LD_LIBRARY_PATH
@@ -61,6 +67,21 @@ in {
       postFixup = (old.postFixup or "") + ''
         substituteInPlace "$out/opt/Discord/Discord" \
           --replace-fail "${lib.makeBinPath [ pkgs.xdg-utils ]}" "${discordXdgOpen}/bin"
+        # Bypass the mutable, checksum-verified asset cache entirely.
+        substituteInPlace "$out/opt/Discord/modules/discord_voice/index.js" \
+          --replace-fail 'setTransportOptions: (options) => instance.setTransportOptions(options),' \
+            'setTransportOptions: (options) => {
+              if (options.videoDecoders) {
+                for (const decoder of options.videoDecoders) {
+                  if (decoder.params?.["libopenh264-path"]) {
+                    decoder.params["libopenh264-path"] = "${discordCodec}/lib/libdiscord_stream_fix.so";
+                  }
+                }
+              }
+              return instance.setTransportOptions(options);
+            },'
+        wrapProgramShell "$out/opt/Discord/Discord" \
+          --set DISCORD_OPENH264_ORIGINAL "${pkgs.openh264}/lib/libopenh264.so"
       '';
     });
 
