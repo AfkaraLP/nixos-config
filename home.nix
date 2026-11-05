@@ -96,6 +96,10 @@ in {
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
+      "text/html" = [ "glide.desktop" ];
+      "application/xhtml+xml" = [ "glide.desktop" ];
+      "x-scheme-handler/http" = [ "glide.desktop" ];
+      "x-scheme-handler/https" = [ "glide.desktop" ];
       "x-scheme-handler/bsmanager" = [ "BSManager.desktop" ];
       "x-scheme-handler/beatsaver" = [ "BSManager.desktop" ];
       "x-scheme-handler/bsplaylist" = [ "BSManager.desktop" ];

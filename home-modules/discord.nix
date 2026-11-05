@@ -1,6 +1,12 @@
-{ ... }:
+{ lib, options, pkgs, ... }:
 
 let
+  # Glide uses a separately pinned nixpkgs; Discord's libraries break its XPCOM.
+  discordXdgOpen = pkgs.writeShellScriptBin "xdg-open" ''
+    unset LD_LIBRARY_PATH
+    exec ${pkgs.xdg-utils}/bin/xdg-open "$@"
+  '';
+
   # TextReplace regex rules, applied to outgoing messages.
   # `find` is a JS regex (global flag implied), `replace` supports $1 etc.
   linkFixes = [
@@ -51,6 +57,12 @@ in {
   programs.nixcord = {
     enable = true;
     discord.vencord.enable = true;
+    discord.package = options.programs.nixcord.discord.package.default.overrideAttrs (old: {
+      postFixup = (old.postFixup or "") + ''
+        substituteInPlace "$out/opt/Discord/Discord" \
+          --replace-fail "${lib.makeBinPath [ pkgs.xdg-utils ]}" "${discordXdgOpen}/bin"
+      '';
+    });
 
     config = {
       useQuickCss = true;
