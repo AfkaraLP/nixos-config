@@ -35,6 +35,9 @@
   boot = {
     # Steam Frame's 28de:2432 adapter needs the in-tree rtw89_8852cu driver.
     kernelPackages = pkgs.linuxPackages_7_2;
+    extraModulePackages = [
+      (config.boot.kernelPackages.callPackage ./btusb-rtl8761bu.nix { })
+    ];
     extraModprobeConfig = ''
       options cfg80211 ieee80211_regdom=DE
     '';

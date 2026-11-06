@@ -1,0 +1,27 @@
+From fa96916cfd05ceb1c26af0b2ea73daf5481cad2d Mon Sep 17 00:00:00 2001
+From: Kiran K <kiran.k@intel.com>
+Subject: Bluetooth: btusb: Preserve event and ACL packet ordering
+
+Backported to the btusb_data callback signature in Linux 7.2.
+Deliver the event before waking the queued ACL worker.
+
+--- a/btusb.c
++++ b/btusb.c
+@@ -1273,12 +1273,16 @@
+ 
+ static int btusb_recv_event(struct btusb_data *data, struct sk_buff *skb)
+ {
++	int err;
++
++	err = data->recv_event(data->hdev, skb);
++
+ 	if (data->intr_interval) {
+ 		/* Trigger dequeue immediately if an event is received */
+ 		schedule_delayed_work(&data->rx_work, 0);
+ 	}
+ 
+-	return data->recv_event(data->hdev, skb);
++	return err;
+ }
+ 
+ static int btusb_recv_intr(struct btusb_data *data, void *buffer, int count)
