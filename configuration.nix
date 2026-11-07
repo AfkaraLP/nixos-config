@@ -107,6 +107,18 @@ in
           "default.clock.max-quantum" = 2048;
         };
       };
+      extraConfig.pipewire-pulse."93-spotify-buffer" = {
+        "pulse.rules" = [
+          {
+            matches = [ { "application.name" = "spotify"; } ];
+            actions.update-props = {
+              # Spotify's requests must cover the graph's 1024-frame minimum.
+              "pulse.min.req" = "1024/48000";
+              "pulse.min.quantum" = "1024/48000";
+            };
+          }
+        ];
+      };
       wireplumber = {
         configPackages = [
           (pkgs.writeTextDir

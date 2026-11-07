@@ -1,4 +1,4 @@
-{ lib, options, pkgs, ... }:
+{ config, lib, options, pkgs, ... }:
 
 let
   # OpenH264 can decode frames successfully but corrupt their contents.
@@ -10,6 +10,16 @@ let
   # Glide uses a separately pinned nixpkgs; Discord's libraries break its XPCOM.
   discordXdgOpen = pkgs.writeShellScriptBin "xdg-open" ''
     unset LD_LIBRARY_PATH
+    # Open Spotify web links in the desktop client, not the default browser.
+    case "$1" in
+      https://open.spotify.com/*|http://open.spotify.com/*)
+        path="''${1#*open.spotify.com/}"
+        path="''${path#intl-??/}"
+        path="''${path%%\?*}"
+        path="''${path%%\#*}"
+        exec ${config.programs.spicetify.spicedSpotify}/bin/spotify "spotify:''${path//\//:}"
+        ;;
+    esac
     exec ${pkgs.xdg-utils}/bin/xdg-open "$@"
   '';
 
