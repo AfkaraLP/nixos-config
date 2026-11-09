@@ -253,6 +253,39 @@ in
 
   }; # hardware
 
+  # BlueZ's AutoEnable powers the adapter; it does not reconnect speakers.
+  # Keep trying this paired speaker while Bluetooth is on, including after resume.
+  systemd.services.vieta-party-autoconnect = {
+    description = "Auto-connect Vieta Pro #PARTY";
+    after = [ "bluetooth.service" ];
+    path = [ pkgs.systemd pkgs.gnugrep ];
+    serviceConfig = {
+      Type = "oneshot";
+      TimeoutStartSec = "20s";
+      # An unreachable/powered-off speaker is normal; the timer tries again.
+      SuccessExitStatus = [ 1 ];
+    };
+    script = ''
+      device="$(busctl --system --list tree org.bluez |
+        grep '/dev_F4_4E_FD_16_78_B5$')" || exit 0
+      adapter="''${device%/dev_*}"
+      if [ "$(busctl --system get-property org.bluez "$adapter" org.bluez.Adapter1 Powered)" = "b true" ] &&
+         [ "$(busctl --system get-property org.bluez "$device" org.bluez.Device1 Connected)" = "b false" ]; then
+        exec busctl --system --timeout=15s call org.bluez "$device" org.bluez.Device1 Connect
+      fi
+    '';
+  };
+
+  systemd.timers.vieta-party-autoconnect = {
+    description = "Check Vieta Pro #PARTY connection";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "5s";
+      OnUnitInactiveSec = "5s";
+      AccuracySec = "1s";
+    };
+  };
+
   xdg.portal = {
     enable = true;
     configPackages = [ pkgs.hyprland ];
