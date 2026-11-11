@@ -13,7 +13,23 @@ let
   '';
 
   # Wine's /tmp socket must be shared across launches of the same prefix.
-  flStudioRuntime = (pkgs.steam.override { privateTmp = false; }).run;
+  flStudioRuntime = (pkgs.steam.override {
+    privateTmp = false;
+    # Wine needs XComposite to redirect hosted plugin GL child windows.
+    extraPkgs = pkgs: [ pkgs.libxcomposite ];
+  }).run;
+
+  # Vital 1.5.5's VST3 editor crashes Wine hosts on close; use its matching VST2.
+  vitalWindows = pkgs.runCommand "vital-windows-vst2-1.5.5" {
+    src = pkgs.fetchurl {
+      url = "https://builds.vital.audio/VitalAudio/vital/1_5_5/VitalInstaller.exe";
+      sha256 = "9ba511319cb3da891338957388bc74d860c7eaa78dcb192d9fe7b70960c29ab3";
+    };
+    nativeBuildInputs = [ pkgs.innoextract ];
+  } ''
+    innoextract --silent --extract --include 'code$GetVST64Dir/Vital.dll' "$src"
+    install -Dm644 'code$GetVST64Dir/Vital.dll' "$out/Vital.dll"
+  '';
 
   # Install/update the official Image-Line Windows installer in this per-user
   # prefix; Nix manages the Wine runtime and launcher, not the licensed app files.
@@ -42,9 +58,24 @@ let
         args+=("$arg")
       done
       cd "$HOME"
+      # Vital's editor is black with Mozart's EGL backend; use native GLX for FL.
+      steam-run "${flStudioWine}/bin/wine" reg add \
+        'HKCU\Software\Wine\AppDefaults\FL64.exe\X11 Driver' \
+        /v UseEGL /t REG_SZ /d N /f >/dev/null
       exec steam-run "${flStudioWine}/bin/wine" \
         "$WINEPREFIX/drive_c/Program Files/Image-Line/FL Studio 2026/FL64.exe" "''${args[@]}"
     '';
+  };
+
+  flStudioDesktop = pkgs.makeDesktopItem {
+    name = "fl-studio";
+    desktopName = "FL Studio";
+    comment = "Music production (Wine)";
+    exec = "${flStudio}/bin/fl-studio %F";
+    icon = "2354_FL64.0";
+    categories = [ "AudioVideo" "Audio" "Midi" "Sequencer" ];
+    startupNotify = true;
+    extraConfig.StartupWMClass = "fl64.exe";
   };
 
   wallpaperConfig = {
@@ -70,16 +101,10 @@ in {
   ]; # imports
 
   home.packages = [ flStudio ];
+  home.file.".vst/Vital.dll".source = "${vitalWindows}/Vital.dll";
 
-  xdg.desktopEntries.fl-studio = {
-    name = "FL Studio";
-    comment = "Music production (Wine)";
-    exec = "${flStudio}/bin/fl-studio %F";
-    icon = "2354_FL64.0";
-    categories = [ "AudioVideo" "Audio" "Midi" "Sequencer" ];
-    startupNotify = true;
-    settings.StartupWMClass = "fl64.exe";
-  };
+  xdg.dataFile."applications/fl-studio.desktop".source =
+    "${flStudioDesktop}/share/applications/fl-studio.desktop";
 
   # Imported by Hyprland's config/rules.lua; keep the Wine owner out of focus.
   xdg.configFile."hypr/config/fl-studio.lua".source =

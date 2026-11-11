@@ -7,6 +7,8 @@ hl.window_rule({
 		initial_title = "^FL Studio$",
 		xwayland = true,
 	},
+	-- Wine advertises a fixed-size main window, which otherwise auto-floats.
+	tile = true,
 	suppress_event = "fullscreen maximize",
 	scrolling_width = 1.0,
 })
