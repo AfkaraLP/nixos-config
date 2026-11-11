@@ -1,3 +1,16 @@
+-- Wine must not re-enter fullscreen after the compositor toggles it off.
+-- Match only the main window, not the untitled owner, menus, or plugins.
+hl.window_rule({
+	name = "fl-studio-main-fullscreen",
+	match = {
+		class = "^fl64[.]exe$",
+		initial_title = "^FL Studio$",
+		xwayland = true,
+	},
+	suppress_event = "fullscreen maximize",
+	scrolling_width = 1.0,
+})
+
 -- FL menus are untitled too: only the blank 800x800 Wine owner is hidden.
 local function is_fl_studio_owner(window)
 	return window and window.class == "fl64.exe" and window.xwayland
