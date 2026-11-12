@@ -4,7 +4,7 @@ hl.window_rule({
 	name = "fl-studio-main-fullscreen",
 	match = {
 		class = "^fl64[.]exe$",
-		initial_title = "^FL Studio$",
+		initial_title = "^(.* - )?FL Studio( [0-9]+)?$",
 		xwayland = true,
 	},
 	-- Wine advertises a fixed-size main window, which otherwise auto-floats.
