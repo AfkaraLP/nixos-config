@@ -136,7 +136,7 @@ in {
         reverseImageSearch.enable = true;
         shikiCodeblocks.enable = true;
         showHiddenChannels.enable = true;
-        silentTyping.enable = true;
+        silentTyping.enable = false;
         translate.enable = true;
         typingIndicator.enable = true;
         typingTweaks.enable = true;
