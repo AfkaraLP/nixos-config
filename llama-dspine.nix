@@ -1,8 +1,12 @@
 { pkgs, llamaCuda }:
 
-# Runtime-only backport onto the installed ABI, not the newer DSpine fork.
-# Rebuild all of libllama: the bridge changes private model/layer layouts.
-# include/llama.h and GGML are unchanged; server/common/mtmd stay installed.
+# CUDA llama.cpp 0.8.0 with two patches:
+# - the DSpine drafter, backported from the newer fork (runtime only);
+# - llama-offload-speedups.patch, for a model that mostly lives in RAM: host
+#   weights are streamed to the GPU through a VRAM ring ahead of use, prompt
+#   ubatches skip the recurrent rollback snapshots, a checkpoint replay carries
+#   a new draft, and the prompt tail is split once instead of three times.
+# The second patch touches GGML and the server, so the whole package is rebuilt.
 assert llamaCuda.version == "0.8.0";
 let
   baseRevision = "8642541b255bfb5dc39cd351a178be09013a55d6";
@@ -325,81 +329,15 @@ let
          }
   '';
 in
-llamaCuda.stdenv.mkDerivation {
-  pname = "llama-cpp-dspine-runtime";
-  version = "0.8.0-d493f841";
+llamaCuda.overrideAttrs (old: {
+  pname = "llama-cpp-dspine";
 
-  src = pkgs.fetchFromGitHub {
-    owner = "ggml-org";
-    repo = "llama.cpp";
-    rev = baseRevision;
-    hash = "sha256-WQAtD8Hos6fEtgPQId7nZiLGyP4asAMKJYEXZid1nqc=";
-  };
-  patches = [ runtimePatch ];
-  patchFlags = [ "-p1" "--fuzz=0" ];
-
-  strictDeps = true;
-  nativeBuildInputs = [ pkgs.cmake pkgs.ninja pkgs.makeWrapper ];
-  buildInputs = [ llamaCuda.dev ];
-
-  cmakeBuildType = "Release";
-  cmakeFlags = [
-    "-DLLAMA_USE_SYSTEM_GGML=ON"
-    "-Dggml_DIR=${llamaCuda.dev}/lib/cmake/ggml"
-    "-DCMAKE_LIBRARY_PATH=${llamaCuda}/lib"
-    "-DCMAKE_INSTALL_RPATH=${llamaCuda}/lib"
-    "-DBUILD_SHARED_LIBS=ON"
-    "-DLLAMA_BUILD_IS_DEV=OFF"
-    "-DLLAMA_BUILD_NUMBER=11960"
-    "-DLLAMA_BUILD_COMMIT=8642541-dspine-d493f841"
-    "-DLLAMA_BUILD_COMMON=OFF"
-    "-DLLAMA_BUILD_TOOLS=OFF"
-    "-DLLAMA_BUILD_SERVER=OFF"
-    "-DLLAMA_BUILD_APP=OFF"
-    "-DLLAMA_BUILD_EXAMPLES=OFF"
-    "-DLLAMA_BUILD_TESTS=OFF"
-    "-DLLAMA_BUILD_MTMD=OFF"
-    "-DLLAMA_BUILD_UI=OFF"
-    "-DLLAMA_TOOLS_INSTALL=OFF"
-    "-DLLAMA_TESTS_INSTALL=OFF"
-    "-DLLAMA_CONNECT=OFF"
+  patches = (old.patches or [ ]) ++ [
+    runtimePatch
+    ./llama-offload-speedups.patch
   ];
 
-  # Never inherit the original UI/npm/CUDA build or its completion checks.
-  # Four low-priority C++ compiler workers also bound peak RAM use.
-  enableParallelBuilding = false;
-  buildPhase = ''
-    runHook preBuild
-    nice -n 10 cmake --build . --target llama --parallel 4
-    runHook postBuild
-  '';
-
-  installPhase = ''
-    runHook preInstall
-    mkdir -p "$out/lib" "$out/bin"
-    cp -P bin/libllama.so* "$out/lib/"
-    install -Dm444 "$src/LICENSE" "$out/share/licenses/llama-cpp/LICENSE"
-
-    # Both installed launchers use DT_RUNPATH, not DT_RPATH (readelf -d).
-    # LD_LIBRARY_PATH therefore selects this libllama before their old RUNPATH;
-    # all other libraries and dynamically loaded backends remain the old ones.
-    # Absolute executable/library paths also retain llamaCuda in the closure.
-    for program in llama-server llama-bench; do
-      makeWrapper "${llamaCuda}/bin/$program" "$out/bin/$program" \
-        --prefix LD_LIBRARY_PATH : "$out/lib:${llamaCuda}/lib"
-    done
-    runHook postInstall
-  '';
-
-  doCheck = false;
-  doInstallCheck = false;
-
-  passthru = {
+  passthru = (old.passthru or { }) // {
     inherit llamaCuda baseRevision dspineRevision runtimePatch;
   };
-  meta = {
-    description = "DSpine libllama backport with the installed CUDA server and bench";
-    inherit (llamaCuda.meta) license platforms;
-    mainProgram = "llama-server";
-  };
-}
+})

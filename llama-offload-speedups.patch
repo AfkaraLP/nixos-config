@@ -1,0 +1,817 @@
+diff --git a/ggml/src/ggml-backend-impl.h b/ggml/src/ggml-backend-impl.h
+index dc7367d..58f6705 100644
+--- a/ggml/src/ggml-backend-impl.h
++++ b/ggml/src/ggml-backend-impl.h
+@@ -287,6 +287,19 @@ extern "C" {
+ #    define GGML_BACKEND_DL_SCORE_IMPL(score_fn)
+ #endif
+ 
++    //
++    // Host weight streaming hooks
++    //
++    // A backend may register these to take over the upload of host-resident weights that the
++    // scheduler copies to it on every graph compute (partial offload of large-batch ops).
++    // plan() receives the upcoming host weights of a graph compute in copy order, copy() performs
++    // one of them (returning false falls back to the regular synchronous copy).
++    struct ggml_backend_wstream_hooks {
++        void (*plan)(ggml_backend_t * backends, const struct ggml_tensor ** srcs, const int * split_ids, int n);
++        bool (*copy)(ggml_backend_t backend, const struct ggml_tensor * src, struct ggml_tensor * dst, int split_id);
++    };
++    GGML_API void ggml_backend_sched_set_wstream_hooks(const struct ggml_backend_wstream_hooks * hooks);
++
+ #ifdef  __cplusplus
+ }
+ #endif
+diff --git a/ggml/src/ggml-backend.cpp b/ggml/src/ggml-backend.cpp
+index 22e5fd9..d4ae503 100644
+--- a/ggml/src/ggml-backend.cpp
++++ b/ggml/src/ggml-backend.cpp
+@@ -1820,6 +1820,17 @@ static bool ggml_backend_sched_is_host_weight(const struct ggml_tensor * t) {
+         ggml_backend_buffer_is_host(t->buffer);
+ }
+ 
++static struct ggml_backend_wstream_hooks g_wstream_hooks = { NULL, NULL };
++
++void ggml_backend_sched_set_wstream_hooks(const struct ggml_backend_wstream_hooks * hooks) {
++    if (hooks) {
++        g_wstream_hooks = *hooks;
++    } else {
++        g_wstream_hooks.plan = NULL;
++        g_wstream_hooks.copy = NULL;
++    }
++}
++
+ static void ggml_backend_sched_copy_input(ggml_backend_sched_t sched, struct ggml_backend_sched_split * split, struct ggml_tensor * input) {
+     const int split_backend_id = split->backend_id;
+     ggml_backend_t split_backend = sched->backends[split_backend_id];
+@@ -1844,6 +1855,12 @@ static void ggml_backend_sched_copy_input(ggml_backend_sched_t sched, struct ggm
+         ggml_backend_synchronize(split_backend);
+     }
+ 
++    // 3d weights are expert stacks, their partial copies are left to the copy callback
++    if (g_wstream_hooks.copy != NULL && input->ne[2] == 1 && ggml_backend_sched_is_host_weight(input) &&
++        g_wstream_hooks.copy(split_backend, input, input_cpy, (int) (split - sched->splits))) {
++        return;
++    }
++
+     if (sched->callback_copy != NULL && ggml_backend_sched_is_host_weight(input) &&
+         sched->callback_copy(split_backend, input, input_cpy, &split->graph, sched->callback_copy_user_data)) {
+         return;
+@@ -1866,6 +1883,32 @@ static enum ggml_status ggml_backend_sched_compute_splits(ggml_backend_sched_t s
+     GGML_ASSERT(sched);
+     struct ggml_backend_sched_split * splits = sched->splits;
+ 
++    static const bool prof = getenv("GGML_SCHED_PROFILE") != NULL;
++    int64_t prof_us[2][3] = {{0, 0, 0}, {0, 0, 0}};
++    int     prof_n[2] = {0, 0};
++    int     prof_nodes[2] = {0, 0};
++    const int64_t prof_start = prof ? ggml_time_us() : 0;
++
++    if (g_wstream_hooks.plan != NULL) {
++        std::vector<ggml_backend_t> plan_backends;
++        std::vector<const struct ggml_tensor *> plan_srcs;
++        std::vector<int> plan_splits;
++        for (int split_id = 0; split_id < sched->n_splits; split_id++) {
++            struct ggml_backend_sched_split * split = &splits[split_id];
++            for (int input_id = 0; input_id < split->n_inputs; input_id++) {
++                struct ggml_tensor * input = split->inputs[input_id];
++                if (ggml_backend_sched_is_host_weight(input) && !(input->flags & GGML_TENSOR_FLAG_INPUT) && input->ne[2] == 1) {
++                    plan_backends.push_back(sched->backends[split->backend_id]);
++                    plan_srcs.push_back(input);
++                    plan_splits.push_back(split_id);
++                }
++            }
++        }
++        if (!plan_srcs.empty()) {
++            g_wstream_hooks.plan(plan_backends.data(), plan_srcs.data(), plan_splits.data(), (int) plan_srcs.size());
++        }
++    }
++
+     int prev_backend_id = -1;
+ 
+     for (int split_id = 0; split_id < sched->n_splits; split_id++) {
+@@ -1885,22 +1928,34 @@ static enum ggml_status ggml_backend_sched_compute_splits(ggml_backend_sched_t s
+ 
+         // copy the input tensors to the split backend
+         // the weights in host memory are copied last, so that the copy callback can read the other inputs of the split
++        const int64_t prof_t0 = prof ? ggml_time_us() : 0;
+         for (int input_id = 0; input_id < split->n_inputs; input_id++) {
+             if (!ggml_backend_sched_is_host_weight(split->inputs[input_id])) {
+                 ggml_backend_sched_copy_input(sched, split, split->inputs[input_id]);
+             }
+         }
++        const int64_t prof_t1 = prof ? ggml_time_us() : 0;
+         for (int input_id = 0; input_id < split->n_inputs; input_id++) {
+             if (ggml_backend_sched_is_host_weight(split->inputs[input_id])) {
+                 ggml_backend_sched_copy_input(sched, split, split->inputs[input_id]);
+             }
+         }
++        const int64_t prof_t2 = prof ? ggml_time_us() : 0;
+ 
+         if (!sched->callback_eval) {
+             enum ggml_status ec = ggml_backend_graph_compute_async(split_backend, &split->graph);
+             if (ec != GGML_STATUS_SUCCESS) {
+                 return ec;
+             }
++            if (prof) {
++                const int64_t prof_t3 = ggml_time_us();
++                const int k = split_backend_id == sched->n_backends - 1 ? 1 : 0; // last backend is the CPU
++                prof_us[k][0] += prof_t1 - prof_t0;
++                prof_us[k][1] += prof_t2 - prof_t1;
++                prof_us[k][2] += prof_t3 - prof_t2;
++                prof_n[k]++;
++                prof_nodes[k] += split->graph.n_nodes;
++            }
+         } else {
+             // similar to ggml_backend_compare_graph_backend
+             for (int j0 = 0; j0 < split->graph.n_nodes; j0++) {
+@@ -1943,6 +1998,13 @@ static enum ggml_status ggml_backend_sched_compute_splits(ggml_backend_sched_t s
+         prev_backend_id = split_backend_id;
+     }
+ 
++    if (prof && sched->n_splits > 8) {
++        fprintf(stderr, "sched: %d splits %.1f ms | gpu: %d splits %d nodes, in %.1f w %.1f run %.1f ms | cpu: %d splits %d nodes, in %.1f w %.1f run %.1f ms\n",
++            sched->n_splits, (ggml_time_us() - prof_start) / 1e3,
++            prof_n[0], prof_nodes[0], prof_us[0][0] / 1e3, prof_us[0][1] / 1e3, prof_us[0][2] / 1e3,
++            prof_n[1], prof_nodes[1], prof_us[1][0] / 1e3, prof_us[1][1] / 1e3, prof_us[1][2] / 1e3);
++    }
++
+     return GGML_STATUS_SUCCESS;
+ }
+ 
+diff --git a/ggml/src/ggml-cuda/ggml-cuda.cu b/ggml/src/ggml-cuda/ggml-cuda.cu
+index aba2152..01b6c7c 100644
+--- a/ggml/src/ggml-cuda/ggml-cuda.cu
++++ b/ggml/src/ggml-cuda/ggml-cuda.cu
+@@ -6362,6 +6362,8 @@ ggml_backend_reg_t ggml_backend_cuda_reg() {
+     return &reg;
+ }
+ 
++#include "ggml-cuda/wstream.inc"
++
+ ggml_backend_t ggml_backend_cuda_init(int device) {
+     if (device < 0 || device >= ggml_backend_cuda_get_device_count()) {
+         GGML_LOG_ERROR("%s: invalid device %d\n", __func__, device);
+@@ -6381,6 +6383,8 @@ ggml_backend_t ggml_backend_cuda_init(int device) {
+         /* .context = */ ctx,
+     };
+ 
++    ggml_cuda_wstream_init(device);
++
+     return cuda_backend;
+ }
+ 
+diff --git a/ggml/src/ggml-cuda/wstream.inc b/ggml/src/ggml-cuda/wstream.inc
+new file mode 100644
+index 0000000..c30462a
+--- /dev/null
++++ b/ggml/src/ggml-cuda/wstream.inc
+@@ -0,0 +1,302 @@
++// Host weight streaming ("wstream").
++//
++// With partial offload, large-batch ops on CPU-resident layers are still run on the GPU and the
++// scheduler re-uploads their weights on every graph compute. Those uploads are synchronous and
++// interleaved with the compute, so the PCIe link idles whenever the CPU or GPU is busy, and the
++// GPU idles while the link is busy.
++//
++// This keeps a small VRAM ring that a worker thread fills ahead of the consumer, in the order in
++// which the scheduler is going to ask for the weights. The scheduler's copy then becomes a
++// device-to-device copy out of the ring. After the last weight of a graph the worker keeps going
++// with the start of the same sequence, which is what the next graph compute asks for first.
++//
++// Enabled with GGML_CUDA_WSTREAM_MB=<ring size in MiB>.
++
++#include <chrono>
++#include <deque>
++#include <thread>
++
++struct ggml_cuda_wstream {
++    enum item_state { PENDING, UPLOADING, READY, CONSUMED, DIRECT };
++
++    struct item {
++        const void * host  = nullptr;
++        size_t       size  = 0;
++        size_t       alloc = 0;
++        size_t       off   = 0;
++        int          split = 0;
++        uint64_t     pass  = 0;  // graph compute this item belongs to
++        item_state   st    = PENDING;
++        bool         live  = false; // occupies ring space
++        cudaEvent_t  done  = nullptr; // completes when the GPU has copied the item out of the ring
++    };
++
++    int    device = 0;
++    size_t cap    = 0;
++    char * base   = nullptr;
++
++    std::mutex              m;
++    std::condition_variable cv;
++    std::thread             worker;
++    bool                    stop = false;
++
++    std::deque<item> q;          // front = oldest item still tracked
++    size_t   next_upload = 0;    // index into q
++    size_t   next_consume = 0;   // index into q
++    size_t   head = 0;           // ring bump pointer
++    uint64_t pass = 0;
++    std::vector<item> last_plan; // sequence of the current pass, replayed as lookahead
++
++    std::vector<cudaEvent_t> event_pool;
++
++    // stats
++    uint64_t n_hit = 0, n_miss = 0, n_direct = 0, bytes_up = 0;
++    double   t_wait = 0.0;
++    bool     debug = false;
++
++    // ring space: live items form a FIFO run, possibly wrapped
++    bool ring_alloc(size_t a, size_t & off) {
++        size_t tail = 0;
++        bool any = false;
++        for (const auto & it : q) {
++            if (it.live) { tail = it.off; any = true; break; }
++        }
++        if (!any) {
++            head = 0;
++            if (a > cap) return false;
++            off = 0; head = a;
++            return true;
++        }
++        if (head > tail) { // not wrapped
++            if (head + a <= cap) { off = head; head += a; return true; }
++            if (a < tail)        { off = 0;    head = a;  return true; }
++            return false;
++        }
++        // wrapped (or full)
++        if (head + a <= tail && head != tail) { off = head; head += a; return true; }
++        return false;
++    }
++
++    void drop_front() {
++        while (!q.empty() && !q.front().live && (q.front().st == CONSUMED || q.front().st == DIRECT) && next_consume > 0 && next_upload > 0) {
++            q.pop_front();
++            next_consume--;
++            next_upload--;
++        }
++    }
++
++    void run() {
++        ggml_cuda_set_device(device);
++        cudaStream_t stream;
++        CUDA_CHECK(cudaStreamCreateWithFlags(&stream, cudaStreamNonBlocking));
++        std::unique_lock<std::mutex> lock(m);
++        while (true) {
++            size_t off = 0;
++            bool got = false;
++            while (!stop && !got) {
++                while (next_upload < q.size() && q[next_upload].st == DIRECT) next_upload++;
++                if (next_upload >= q.size()) {
++                    cv.wait(lock);
++                    continue;
++                }
++                release_consumed();
++                got = ring_alloc(q[next_upload].alloc, off);
++                if (!got) {
++                    // space is held by items the GPU has not copied out yet, poll their events
++                    cv.wait_for(lock, std::chrono::microseconds(100));
++                }
++            }
++            if (stop) break;
++            item & it = q[next_upload]; // deque references stay valid across push_back / pop_front of other elements
++            it.off  = off;
++            it.live = true;
++            it.st   = UPLOADING;
++            const void * host = it.host;
++            const size_t size = it.size;
++            lock.unlock();
++            CUDA_CHECK(cudaMemcpyAsync(base + off, host, size, cudaMemcpyHostToDevice, stream));
++            CUDA_CHECK(cudaStreamSynchronize(stream));
++            lock.lock();
++            bytes_up += size;
++            it.st = READY;
++            next_upload++;
++            cv.notify_all();
++        }
++        cudaStreamDestroy(stream);
++    }
++
++    // free the ring space of the consumed items the GPU is done reading
++    void release_consumed() {
++        for (auto & it : q) {
++            if (it.st != CONSUMED || !it.live) continue;
++            if (cudaEventQuery(it.done) != cudaSuccess) {
++                (void) cudaGetLastError();
++                break; // FIFO: later items complete later
++            }
++            event_pool.push_back(it.done);
++            it.done = nullptr;
++            it.live = false;
++        }
++        drop_front();
++    }
++
++    void plan(ggml_backend_t * backends, const ggml_tensor ** srcs, const int * split_ids, int n);
++    bool copy(ggml_backend_t backend, const ggml_tensor * src, ggml_tensor * dst, int split_id);
++};
++
++static ggml_cuda_wstream * g_cuda_wstream = nullptr;
++
++void ggml_cuda_wstream::plan(ggml_backend_t * backends, const ggml_tensor ** srcs, const int * split_ids, int n) {
++    std::vector<item> cur;
++    cur.reserve(n);
++    ggml_backend_t backend = nullptr;
++    for (int i = 0; i < n; i++) {
++        if (!ggml_backend_is_cuda(backends[i])) continue;
++        ggml_backend_cuda_context * cuda_ctx = (ggml_backend_cuda_context *) backends[i]->context;
++        if (cuda_ctx->device != device) continue;
++        backend = backends[i];
++        item it;
++        it.host  = srcs[i]->data;
++        it.size  = ggml_nbytes(srcs[i]);
++        it.alloc = GGML_PAD(it.size, 256);
++        it.split = split_ids[i];
++        cur.push_back(it);
++    }
++    if (cur.empty()) {
++        return;
++    }
++
++    std::unique_lock<std::mutex> lock(m);
++    pass++;
++    release_consumed();
++
++    // keep the lookahead that matches the start of this plan
++    size_t n_keep = 0;
++    bool   match  = true;
++    for (size_t i = next_consume; i < q.size(); i++) {
++        const size_t k = i - next_consume;
++        if (k >= cur.size() || q[i].host != cur[k].host || q[i].size != cur[k].size || q[i].st == DIRECT) {
++            match = false;
++            break;
++        }
++        n_keep++;
++    }
++    if (!match) {
++        // unexpected sequence: wait for an in-flight upload, then drop the whole lookahead
++        cv.wait(lock, [&] {
++            for (const auto & it : q) if (it.st == UPLOADING) return false;
++            return true;
++        });
++        while (q.size() > next_consume) {
++            q.pop_back();
++        }
++        next_upload = std::min(next_upload, q.size());
++        n_keep = 0;
++        // the bump pointer continues after the newest item still in the ring
++        for (const auto & it : q) if (it.live) head = it.off + it.alloc;
++    }
++    for (size_t k = 0; k < n_keep; k++) {
++        q[next_consume + k].split = cur[k].split;
++        q[next_consume + k].pass  = pass;
++    }
++    for (size_t k = n_keep; k < cur.size(); k++) {
++        item it = cur[k];
++        it.pass = pass;
++        if (it.alloc > cap) it.st = DIRECT;
++        q.push_back(it);
++    }
++    // lookahead: the next graph compute most likely starts with the same sequence
++    size_t ahead = 0;
++    for (size_t k = 0; k < cur.size() && ahead + cur[k].alloc <= cap; k++) {
++        item it = cur[k];
++        it.pass = pass + 1;
++        if (it.alloc > cap) break;
++        ahead += it.alloc;
++        q.push_back(it);
++    }
++    if (debug) {
++        fprintf(stderr, "wstream: pass %llu: %zu weights, kept %zu, hit %llu miss %llu direct %llu, uploaded %.1f MiB, waited %.1f ms\n",
++            (unsigned long long) pass, cur.size(), n_keep, (unsigned long long) n_hit, (unsigned long long) n_miss,
++            (unsigned long long) n_direct, bytes_up / 1048576.0, t_wait * 1e3);
++    }
++    n_hit = n_miss = n_direct = 0; bytes_up = 0; t_wait = 0.0;
++    cv.notify_all();
++}
++
++bool ggml_cuda_wstream::copy(ggml_backend_t backend, const ggml_tensor * src, ggml_tensor * dst, int split_id) {
++    if (!ggml_backend_is_cuda(backend)) {
++        return false;
++    }
++    ggml_backend_cuda_context * cuda_ctx = (ggml_backend_cuda_context *) backend->context;
++    if (cuda_ctx->device != device) {
++        return false;
++    }
++
++    std::unique_lock<std::mutex> lock(m);
++    GGML_UNUSED(split_id);
++
++    if (next_consume >= q.size() || q[next_consume].host != src->data || q[next_consume].size != ggml_nbytes(src) || q[next_consume].pass != pass) {
++        n_miss++;
++        return false;
++    }
++    item & it = q[next_consume];
++    if (it.st == DIRECT) {
++        next_consume++;
++        n_direct++;
++        return false;
++    }
++    const int64_t t0 = ggml_time_us();
++    cv.wait(lock, [&] { return it.st == READY; });
++    t_wait += (ggml_time_us() - t0) * 1e-6;
++
++    CUDA_CHECK(cudaMemcpyAsync(dst->data, base + it.off, it.size, cudaMemcpyDeviceToDevice, cuda_ctx->stream()));
++    if (event_pool.empty()) {
++        cudaEvent_t ev;
++        CUDA_CHECK(cudaEventCreateWithFlags(&ev, cudaEventDisableTiming));
++        event_pool.push_back(ev);
++    }
++    it.done = event_pool.back();
++    event_pool.pop_back();
++    CUDA_CHECK(cudaEventRecord(it.done, cuda_ctx->stream()));
++    it.st = CONSUMED;
++    next_consume++;
++    n_hit++;
++    return true;
++}
++
++static void ggml_cuda_wstream_plan(ggml_backend_t * backends, const ggml_tensor ** srcs, const int * split_ids, int n) {
++    if (g_cuda_wstream) g_cuda_wstream->plan(backends, srcs, split_ids, n);
++}
++
++static bool ggml_cuda_wstream_copy(ggml_backend_t backend, const ggml_tensor * src, ggml_tensor * dst, int split_id) {
++    return g_cuda_wstream && g_cuda_wstream->copy(backend, src, dst, split_id);
++}
++
++static void ggml_cuda_wstream_init(int device) {
++    static std::mutex init_mutex;
++    std::lock_guard<std::mutex> lock(init_mutex);
++    if (g_cuda_wstream != nullptr) {
++        return;
++    }
++    const int mb = ggml_cuda_env_int("GGML_CUDA_WSTREAM_MB", 0);
++    if (mb <= 0) {
++        return;
++    }
++    auto * ws = new ggml_cuda_wstream;
++    ws->device = device;
++    ws->cap    = (size_t) mb * 1024 * 1024;
++    ws->debug  = ggml_cuda_env_flag("GGML_CUDA_WSTREAM_DEBUG");
++    ggml_cuda_set_device(device);
++    if (cudaMalloc((void **) &ws->base, ws->cap) != cudaSuccess) {
++        (void) cudaGetLastError();
++        GGML_LOG_WARN("wstream: failed to allocate a %d MiB ring, disabled\n", mb);
++        delete ws;
++        return;
++    }
++    ws->worker = std::thread([ws] { ws->run(); });
++    ws->worker.detach();
++    g_cuda_wstream = ws;
++    static const ggml_backend_wstream_hooks hooks = { ggml_cuda_wstream_plan, ggml_cuda_wstream_copy };
++    ggml_backend_sched_set_wstream_hooks(&hooks);
++    GGML_LOG_INFO("wstream: streaming host weights through a %d MiB ring on device %d\n", mb, device);
++}
+diff --git a/src/llama-arch.cpp b/src/llama-arch.cpp
+index de9d331..3a5e725 100644
+--- a/src/llama-arch.cpp
++++ b/src/llama-arch.cpp
+@@ -1317,6 +1317,13 @@ bool llm_arch_supports_rs_rollback(const llm_arch & arch) {
+     }
+ }
+ 
++// these models do not snapshot their recurrent state in long ubatches: those are prompt processing, where
++// the snapshots cost time and nothing rolls back into them. Drafts (and a replayed prefix in front of one)
++// stay well below the bound, so their tail can still be rolled back.
++bool llm_arch_rs_skips_snapshots(const llm_arch & arch, uint32_t n_seq_tokens) {
++    return (arch == LLM_ARCH_QWEN35 || arch == LLM_ARCH_QWEN35MOE) && n_seq_tokens > 128;
++}
++
+ // these models pick weights, routing or input meaning per ubatch based on token vs embd input
+ bool llm_arch_supports_mixed_batch(const llm_arch & arch) {
+     switch (arch) {
+diff --git a/src/llama-arch.h b/src/llama-arch.h
+index e7c7c40..41cb28d 100644
+--- a/src/llama-arch.h
++++ b/src/llama-arch.h
+@@ -917,4 +917,5 @@ bool llm_arch_is_hybrid         (const llm_arch & arch);
+ bool llm_arch_is_diffusion      (const llm_arch & arch);
+ bool llm_arch_supports_sm_tensor(const llm_arch & arch);
+ bool llm_arch_supports_rs_rollback(const llm_arch & arch);
++bool llm_arch_rs_skips_snapshots(const llm_arch & arch, uint32_t n_seq_tokens);
+ bool llm_arch_supports_mixed_batch(const llm_arch & arch);
+diff --git a/src/llama-memory-recurrent.cpp b/src/llama-memory-recurrent.cpp
+index 5fd6446..e5f2be9 100644
+--- a/src/llama-memory-recurrent.cpp
++++ b/src/llama-memory-recurrent.cpp
+@@ -35,6 +35,8 @@ llama_memory_recurrent::llama_memory_recurrent(
+ 
+     this->n_rs_seq = n_rs_seq;
+     rs_idx.assign(n_seq_max, 0);
++    rs_valid.assign(n_seq_max, 0);
++    arch = model.arch;
+ 
+     cells.clear();
+     cells.resize(mem_size);
+@@ -160,6 +162,7 @@ void llama_memory_recurrent::clear(bool data) {
+     }
+ 
+     std::fill(rs_idx.begin(), rs_idx.end(), 0);
++    std::fill(rs_valid.begin(), rs_valid.end(), 0);
+ }
+ 
+ bool llama_memory_recurrent::seq_rm(llama_seq_id seq_id, llama_pos p0, llama_pos p1) {
+@@ -208,7 +211,7 @@ bool llama_memory_recurrent::seq_rm(llama_seq_id seq_id, llama_pos p0, llama_pos
+                 const llama_pos rollback = cell.pos - (p0 - 1);
+                 // pending rollback is single-use
+                 const bool pending = rs_idx[seq_id] != 0;
+-                if (!pending && rollback >= 1 && rollback <= (llama_pos) n_rs_seq) {
++                if (!pending && rollback >= 1 && rollback <= (llama_pos) n_rs_seq && rollback <= (llama_pos) rs_valid[seq_id]) {
+                     set_rs_idx(seq_id, (uint32_t) rollback);
+                     cell.pos = p0 - 1;
+                     return true;
+@@ -677,6 +680,9 @@ bool llama_memory_recurrent::find_slot(const llama_ubatch & ubatch) {
+             const llama_seq_id seq_id = ubatch.seq_id[i][j];
+             cell.seq_id.insert(seq_id);
+             cells[seq_id].tail = cell_id;
++            if (seq_id >= 0 && (size_t) seq_id < rs_valid.size()) {
++                rs_valid[seq_id] = n_rs_seq > 0 && !llm_arch_rs_skips_snapshots(arch, n_seq_tokens) ? n_rs_seq : 0;
++            }
+         }
+     }
+ 
+diff --git a/src/llama-memory-recurrent.h b/src/llama-memory-recurrent.h
+index d0fc147..65c126e 100644
+--- a/src/llama-memory-recurrent.h
++++ b/src/llama-memory-recurrent.h
+@@ -77,6 +77,10 @@ public:
+     // per-seq rollback index
+     std::vector<uint32_t> rs_idx;
+ 
++    // per-seq number of snapshots the last ubatch left behind, see llm_arch_rs_skips_snapshots()
++    std::vector<uint32_t> rs_valid;
++    llm_arch arch;
++
+     void set_rs_idx(llama_seq_id seq_id, uint32_t idx);
+ 
+     // computed before each graph build
+diff --git a/src/models/delta-net-base.cpp b/src/models/delta-net-base.cpp
+index 2e15777..7c06b30 100644
+--- a/src/models/delta-net-base.cpp
++++ b/src/models/delta-net-base.cpp
+@@ -473,7 +473,8 @@ ggml_tensor * llm_build_delta_net_base::build_conv_state(
+ 
+     const size_t row_size  = ggml_row_size(conv_states_all->type, row_count);
+ 
+-    if (cparams.n_rs_seq == 0) {
++    // snapshots are only taken for ubatches a draft can be rolled back in, see llama_memory_recurrent::rs_valid
++    if (cparams.n_rs_seq == 0 || llm_arch_rs_skips_snapshots(arch, ubatch.n_seq_tokens)) {
+         const int64_t s_idx  = conv_input->ne[0] - conv_states->ne[0];
+         const int64_t s_slot = 0;
+ 
+@@ -540,7 +541,7 @@ ggml_tensor * llm_build_delta_net_base::build_recurrent_attn(
+     const int64_t n_seqs       = s->ne[3];
+     const int64_t n_seq_tokens = q->ne[2];
+ 
+-    const bool keep = cparams.n_rs_seq > 0;
++    const bool keep = cparams.n_rs_seq > 0 && !llm_arch_rs_skips_snapshots(arch, ubatch.n_seq_tokens);
+ 
+     if (!keep) {
+         auto attn_out = build_delta_net(q, k, v, g, b, s, il);
+diff --git a/tools/server/server-context.cpp b/tools/server/server-context.cpp
+index 2bd1ab9..adf8692 100644
+--- a/tools/server/server-context.cpp
++++ b/tools/server/server-context.cpp
+@@ -92,6 +92,67 @@ static std::vector<llama_token> server_accept_replay(
+     return result;
+ }
+ 
++// Every break in the prompt is one more decode. With partial offload a decode costs a full upload of the
++// weights whatever its size, so only break for the checkpoint a follow-up request restores: the one right
++// before the end of the prompt.
++static bool server_ckpt_tail_only() {
++    static const bool res = getenv("LLAMA_SERVER_CKPT_TAIL_ONLY") != nullptr;
++    return res;
++}
++
++// longest replay batch that still gets a new draft appended, 0 disables it; the recurrent snapshots that let
++// the tail of such a batch be rolled back are only taken in short ubatches
++static int server_spec_replay_max_tokens() {
++    static const int n = []() {
++        const char * env = getenv("LLAMA_SPEC_REPLAY_DRAFT_MAX");
++        return env ? atoi(env) : 96;
++    }();
++    return n;
++}
++
++// replay of an accepted prefix with a fresh draft appended to it: the first n_replay tokens were accepted
++// before the checkpoint restore and are accepted again, the rest of the draft is verified as usual
++static std::vector<llama_token> server_accept_replay_and_verify(
++        common_sampler * smpl,
++        llama_context * ctx,
++        const std::vector<int32_t> & idxs,
++        const llama_tokens & draft,
++        size_t n_replay) {
++    GGML_ASSERT(idxs.size() == draft.size() + 1);
++    GGML_ASSERT(n_replay <= draft.size());
++
++    const llama_vocab * vocab = llama_model_get_vocab(llama_get_model(ctx));
++
++    std::vector<llama_token> result;
++    result.reserve(idxs.size());
++
++    for (size_t i = 0; i < n_replay; ++i) {
++        // the token is discarded - the call is what advances the sampler over this position
++        common_sampler_sample(smpl, ctx, idxs[i]);
++        common_sampler_accept(smpl, draft[i], true);
++        result.push_back(draft[i]);
++    }
++
++    size_t i = n_replay;
++    for (; i < draft.size(); ++i) {
++        const llama_token id = common_sampler_sample(smpl, ctx, idxs[i]);
++        common_sampler_accept(smpl, id, true);
++        result.push_back(id);
++
++        if (draft[i] != id || (llama_vocab_is_eog(vocab, id) && i + 1 < draft.size())) {
++            break;
++        }
++    }
++
++    if (i == draft.size()) {
++        const llama_token id = common_sampler_sample(smpl, ctx, idxs[i]);
++        common_sampler_accept(smpl, id, true);
++        result.push_back(id);
++    }
++
++    return result;
++}
++
+ // synthetic draft verification for benchmarking - accept draft tokens at random instead of by match with the target
+ // on replay the draft was already accepted before a context checkpoint restore, so repeat the same decisions
+ static std::vector<llama_token> server_sample_and_accept_synth(
+@@ -300,6 +361,10 @@ struct server_slot {
+     std::vector<int32_t> spec_i_batch;
+     common_prompt_checkpoint spec_ckpt;
+     bool spec_is_replay = false;
++    // a replay batch can carry a fresh draft behind the replayed prefix, this is the length of that prefix
++    size_t spec_n_replay = 0;
++    bool spec_keep_dft = false; // the draft context of the accepted tokens survived the checkpoint restore
++    llama_tokens spec_draft_ext;
+     std::mt19937 spec_synth_rng;
+ 
+     // TODO: move members that belong to the task (such as `generated`, `has_new_line`) to task_results_state
+@@ -423,6 +488,9 @@ struct server_slot {
+         SLT_DBG(*this, "%s", "\n");
+ 
+         spec_is_replay = false;
++        spec_n_replay  = 0;
++        spec_keep_dft  = false;
++        spec_draft_ext.clear();
+ 
+         last_nl_pos    = 0;
+         generated      = {};
+@@ -3835,6 +3903,7 @@ private:
+ 
+         std::vector<server_slot *> generating;
+         std::vector<server_slot *> drafting;
++        std::vector<server_slot *> replaying;
+ 
+         // determine which slots are generating and drafting
+         iterate(slots, [&](server_slot & slot) {
+@@ -3874,6 +3943,38 @@ private:
+                         if (use_ckpt_tgt) {
+                             GGML_ASSERT(!slot.spec_ckpt.empty());
+                         }
++
++                        if (slot.spec_is_replay) {
++                            replaying.push_back(&slot);
++
++                            // The replay costs a full pass over the target whatever its size, so let it verify a new
++                            // draft as well. The draft starts at the last replayed token (sampled by the target).
++                            const llama_token id_last = slot.spec_draft.back();
++                            const int n_replay  = (int) slot.spec_draft.size();
++                            const int n_ext_max = std::min(n_draft_max, server_spec_replay_max_tokens()) - n_replay;
++                            const llama_vocab * vocab_tgt = llama_model_get_vocab(llama_get_model(ctx_tgt));
++
++                            slot.spec_n_replay = 0;
++                            slot.spec_draft_ext.clear();
++
++                            if (slot.spec_keep_dft && n_ext_max > 0 && !llama_vocab_is_eog(vocab_tgt, id_last)) {
++                                slot.spec_prompt = slot.prompt.tokens.get_text_tokens();
++                                slot.spec_prompt.push_back(slot.sampled);
++                                slot.spec_prompt.insert(slot.spec_prompt.end(), slot.spec_draft.begin(), slot.spec_draft.end() - 1);
++
++                                common_speculative_get_draft_params(spec.get(), slot.id) = {
++                                    /* .drafting = */ true,
++                                    /* .n_max    = */ n_ext_max,
++                                    /* .pos0     = */ slot.prompt.tokens.pos_next() + n_replay,
++                                    /* .id_last  = */ id_last,
++                                    /* .prompt   = */ &slot.spec_prompt,
++                                    /* .result   = */ &slot.spec_draft_ext,
++                                    /* .result_q = */ nullptr,
++                                    /* .temp     = */ slot.task->params.sampling.temp,
++                                    /* .seed     = */ slot.task->params.sampling.seed,
++                                };
++                            }
++                        }
+                     } else {
+                         GGML_ASSERT(slot.spec_i_batch.empty());
+ 
+@@ -3909,12 +4010,31 @@ private:
+         });
+ 
+         // generate the actual drafts (if any)
+-        if (!drafting.empty()) {
++        if (!drafting.empty() || !replaying.empty()) {
+             queue_tasks.yield_to_queue([&]() {
+                 common_speculative_draft(spec.get());
+             });
+         }
+ 
++        // append the new drafts to the replayed prefixes
++        iterate(replaying, [&](server_slot & slot) {
++            if (!slot.spec_draft_ext.empty()) {
++                slot.stats.n_draft_tokens += slot.spec_draft_ext.size();
++
++                slot.spec_n_replay = slot.spec_draft.size();
++                slot.spec_draft.insert(slot.spec_draft.end(), slot.spec_draft_ext.begin(), slot.spec_draft_ext.end());
++                slot.spec_draft_ext.clear();
++            }
++
++            // the replay decode injects the draft context of the replayed tokens again
++            if (ctx_dft && slot.spec_keep_dft) {
++                if (!llama_memory_seq_rm(llama_get_memory(ctx_dft), slot.id, slot.spec_ckpt.pos_max + 1, -1)) {
++                    GGML_ABORT("failed to remove sequence %d\n", slot.id);
++                }
++            }
++            slot.spec_keep_dft = false;
++        });
++
+         // make checkpoints if needed
+         iterate(drafting, [&](server_slot & slot) {
+             auto & draft = slot.spec_draft;
+@@ -4500,7 +4620,7 @@ private:
+                         slot.prompt.tokens.push_back(cur_tok);
+ 
+                         // break at the last user message, or at user messages at least min step past the last checkpoint
+-                        if (do_checkpoint && spans.is_user_start(slot.prompt.n_tokens())) {
++                        if (do_checkpoint && !server_ckpt_tail_only() && spans.is_user_start(slot.prompt.n_tokens())) {
+                             const auto pos = slot.prompt.n_tokens();
+                             const auto & checkpoints = slot.prompt.checkpoints;
+ 
+@@ -4519,6 +4639,9 @@ private:
+ 
+                             bool should_break = false;
+                             for (int offset : checkpoint_offsets) {
++                                if (offset != 4 && server_ckpt_tail_only()) {
++                                    continue;
++                                }
+                                 const int n_last = std::min(n_batch, offset);
+                                 if (slot.task->n_tokens() == slot.prompt.n_tokens() + n_last) {
+                                     should_break = true;
+@@ -4946,6 +5069,8 @@ private:
+                     accepted = server_sample_and_accept_synth(
+                             slot.smpl.get(), slot.ctx_tgt, spec_i_batch, slot.spec_draft,
+                             synth_probs, slot.spec_synth_rng, slot.spec_is_replay);
++                } else if (slot.spec_is_replay && slot.spec_n_replay > 0) {
++                    accepted = server_accept_replay_and_verify(slot.smpl.get(), slot.ctx_tgt, spec_i_batch, slot.spec_draft, slot.spec_n_replay);
+                 } else if (slot.spec_is_replay && slot.use_spec_rejection()) {
+                     accepted = server_accept_replay(slot.smpl.get(), slot.ctx_tgt, spec_i_batch, slot.spec_draft);
+                 } else if (use_rejection) {
+@@ -4971,6 +5096,7 @@ private:
+ 
+                         // partial acceptance is not supported by the context -> truncate the draft and restore the state
+                         slot.spec_is_replay = true;
++                        slot.spec_n_replay  = 0;
+                         slot.spec_draft = std::move(accepted);
+ 
+                         const auto & ckpt = slot.spec_ckpt;
+@@ -4983,7 +5109,21 @@ private:
+                             GGML_ASSERT(ckpt.load_dft(slot.ctx_dft, slot.id, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY));
+                         }
+ 
+-                        slot.mem.seq_rm(slot.id, ckpt.pos_max + 1, -1);
++                        // The draft context of the accepted tokens is still valid: keep it, so the replay can carry a
++                        // new draft. Only when the draft context has no state of its own to restore.
++                        slot.spec_keep_dft = slot.ctx_dft && ckpt.data_dft.empty() && server_spec_replay_max_tokens() > 0 &&
++                            llama_memory_seq_pos_max(llama_get_memory(slot.ctx_dft), slot.id) >= ckpt.pos_max + (llama_pos) slot.spec_draft.size();
++                        if (slot.spec_keep_dft) {
++                            common_memory mem_tgt;
++                            mem_tgt.init(slot.ctx_tgt);
++                            mem_tgt.seq_rm(slot.id, ckpt.pos_max + 1, -1);
++                            // tokens: sampled at pos_max + 1, then the accepted draft, whose last token is new
++                            if (!llama_memory_seq_rm(llama_get_memory(slot.ctx_dft), slot.id, ckpt.pos_max + 1 + (llama_pos) slot.spec_draft.size(), -1)) {
++                                GGML_ABORT("failed to remove sequence %d\n", slot.id);
++                            }
++                        } else {
++                            slot.mem.seq_rm(slot.id, ckpt.pos_max + 1, -1);
++                        }
+ 
+                         slot.prompt.tokens.keep_first(ckpt.n_tokens);
+                         common_sampler_copy(smpl_save.get(), slot.smpl.get());
+@@ -5008,6 +5148,7 @@ private:
+                 n_accepted--;
+             }
+             slot.spec_is_replay = false;
++            slot.spec_n_replay  = 0;
+ 
+             slot.stats.update_gen_last();
+ 
