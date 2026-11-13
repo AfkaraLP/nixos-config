@@ -163,10 +163,10 @@ index aba2152..01b6c7c 100644
  
 diff --git a/ggml/src/ggml-cuda/wstream.inc b/ggml/src/ggml-cuda/wstream.inc
 new file mode 100644
-index 0000000..c30462a
+index 0000000..4269667
 --- /dev/null
 +++ b/ggml/src/ggml-cuda/wstream.inc
-@@ -0,0 +1,302 @@
+@@ -0,0 +1,332 @@
 +// Host weight streaming ("wstream").
 +//
 +// With partial offload, large-batch ops on CPU-resident layers are still run on the GPU and the
@@ -198,9 +198,11 @@ index 0000000..c30462a
 +        item_state   st    = PENDING;
 +        bool         live  = false; // occupies ring space
 +        cudaEvent_t  done  = nullptr; // completes when the GPU has copied the item out of the ring
++        cudaEvent_t  up    = nullptr; // completes when the upload into the ring has landed
 +    };
 +
 +    int    device = 0;
++    int    depth  = 1;    // uploads in flight, 0 = wait for each one
 +    size_t cap    = 0;
 +    char * base   = nullptr;
 +
@@ -258,6 +260,7 @@ index 0000000..c30462a
 +        ggml_cuda_set_device(device);
 +        cudaStream_t stream;
 +        CUDA_CHECK(cudaStreamCreateWithFlags(&stream, cudaStreamNonBlocking));
++        std::deque<cudaEvent_t> inflight;
 +        std::unique_lock<std::mutex> lock(m);
 +        while (true) {
 +            size_t off = 0;
@@ -282,9 +285,22 @@ index 0000000..c30462a
 +            it.st   = UPLOADING;
 +            const void * host = it.host;
 +            const size_t size = it.size;
++            cudaEvent_t ev = get_event();
++            it.up = ev;
 +            lock.unlock();
++            // bound the queue: a deep queue of uploads delays the other copies that share the copy engines
++            while (depth > 0 && (int) inflight.size() >= depth) {
++                CUDA_CHECK(cudaEventSynchronize(inflight.front()));
++                inflight.pop_front();
++            }
++            // queue the uploads back to back, the consumer waits for each one on the GPU
 +            CUDA_CHECK(cudaMemcpyAsync(base + off, host, size, cudaMemcpyHostToDevice, stream));
-+            CUDA_CHECK(cudaStreamSynchronize(stream));
++            CUDA_CHECK(cudaEventRecord(ev, stream));
++            if (depth > 0) {
++                inflight.push_back(ev);
++            } else {
++                CUDA_CHECK(cudaEventSynchronize(ev));
++            }
 +            lock.lock();
 +            bytes_up += size;
 +            it.st = READY;
@@ -304,9 +320,24 @@ index 0000000..c30462a
 +            }
 +            event_pool.push_back(it.done);
 +            it.done = nullptr;
++            if (it.up) {
++                event_pool.push_back(it.up);
++                it.up = nullptr;
++            }
 +            it.live = false;
 +        }
 +        drop_front();
++    }
++
++    cudaEvent_t get_event() {
++        if (event_pool.empty()) {
++            cudaEvent_t ev;
++            CUDA_CHECK(cudaEventCreateWithFlags(&ev, cudaEventDisableTiming));
++            return ev;
++        }
++        cudaEvent_t ev = event_pool.back();
++        event_pool.pop_back();
++        return ev;
 +    }
 +
 +    void plan(ggml_backend_t * backends, const ggml_tensor ** srcs, const int * split_ids, int n);
@@ -357,6 +388,9 @@ index 0000000..c30462a
 +            return true;
 +        });
 +        while (q.size() > next_consume) {
++            if (q.back().up) {
++                event_pool.push_back(q.back().up); // stream order keeps a later reuse of its ring space safe
++            }
 +            q.pop_back();
 +        }
 +        next_upload = std::min(next_upload, q.size());
@@ -418,14 +452,9 @@ index 0000000..c30462a
 +    cv.wait(lock, [&] { return it.st == READY; });
 +    t_wait += (ggml_time_us() - t0) * 1e-6;
 +
++    CUDA_CHECK(cudaStreamWaitEvent(cuda_ctx->stream(), it.up, 0));
 +    CUDA_CHECK(cudaMemcpyAsync(dst->data, base + it.off, it.size, cudaMemcpyDeviceToDevice, cuda_ctx->stream()));
-+    if (event_pool.empty()) {
-+        cudaEvent_t ev;
-+        CUDA_CHECK(cudaEventCreateWithFlags(&ev, cudaEventDisableTiming));
-+        event_pool.push_back(ev);
-+    }
-+    it.done = event_pool.back();
-+    event_pool.pop_back();
++    it.done = get_event();
 +    CUDA_CHECK(cudaEventRecord(it.done, cuda_ctx->stream()));
 +    it.st = CONSUMED;
 +    next_consume++;
@@ -455,6 +484,7 @@ index 0000000..c30462a
 +    ws->device = device;
 +    ws->cap    = (size_t) mb * 1024 * 1024;
 +    ws->debug  = ggml_cuda_env_flag("GGML_CUDA_WSTREAM_DEBUG");
++    ws->depth  = ggml_cuda_env_int("GGML_CUDA_WSTREAM_DEPTH", 1);
 +    ggml_cuda_set_device(device);
 +    if (cudaMalloc((void **) &ws->base, ws->cap) != cudaSuccess) {
 +        (void) cudaGetLastError();
