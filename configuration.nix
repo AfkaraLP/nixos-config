@@ -57,7 +57,6 @@ in
     };
     dhcpcd.wait = "background";
     nameservers = [ "1.1.1.1" "9.9.9.9" ];
-    firewall.allowedTCPPorts = [ 1234 ]; # LM Studio LAN API
   }; # networking
 
   time.timeZone = "Europe/Berlin";
@@ -197,7 +196,6 @@ in
       wl-clipboard
       easyeffects
       jujutsu
-      lmstudio
       sane-backends
       simple-scan
       bottom
