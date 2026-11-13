@@ -196,6 +196,15 @@ in
       wl-clipboard
       easyeffects
       jujutsu
+      (import ./llama-dspine.nix {
+        inherit pkgs;
+        llamaCuda = (llama-cpp.override { cudaSupport = true; }).overrideAttrs (old: {
+          # This machine's RTX 2070 SUPER is Turing (sm_75).
+          cmakeFlags = builtins.filter
+            (flag: !(pkgs.lib.hasPrefix "-DCMAKE_CUDA_ARCHITECTURES=" flag))
+            old.cmakeFlags ++ [ "-DCMAKE_CUDA_ARCHITECTURES=75" ];
+        });
+      })
       sane-backends
       simple-scan
       bottom
