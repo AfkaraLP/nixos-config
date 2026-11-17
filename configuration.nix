@@ -50,9 +50,14 @@ in
     hostName = "nixos"; # Define your hostname.
     networkmanager = {
       enable = true;
-      settings.connection-wake-on-lan = {
-        match-device = "interface-name:enp34s0";
-        "ethernet.wake-on-lan" = 64; # Magic packets only.
+      settings = {
+        # No Wi-Fi dozing: the Steam Frame dongle let frames sit in the AP
+        # buffer (DTIM 2 @ 100 ms), which showed up as ~80 ms latency spikes.
+        connection."wifi.powersave" = 2;
+        connection-wake-on-lan = {
+          match-device = "interface-name:enp34s0";
+          "ethernet.wake-on-lan" = 64; # Magic packets only.
+        };
       };
     };
     dhcpcd.wait = "background";
