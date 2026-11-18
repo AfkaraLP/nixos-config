@@ -98,6 +98,7 @@ in {
     ./home-modules/helix.nix
     ./home-modules/spicetify.nix
     ./home-modules/discord.nix
+    ./home-modules/mapgen.nix
   ]; # imports
 
   home.packages = [ flStudio ];
