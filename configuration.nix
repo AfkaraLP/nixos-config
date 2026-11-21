@@ -177,6 +177,7 @@ in
       ModelBouncingKeys=1
     '';
     systemPackages = with pkgs; [
+      t3code
       nvitop
       devenv
       proton-vpn-cli
