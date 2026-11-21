@@ -1,7 +1,7 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 let
   # Pinned audio-focused Wine: DirectComposition/WebView2 and FL signature fixes.
-  flStudioWine = pkgs.runCommand "fl-studio-wine-mozart-0.0.2" {
+  flStudioWineStock = pkgs.runCommand "fl-studio-wine-mozart-0.0.2" {
     src = pkgs.fetchurl {
       url = "https://github.com/HeapHeapHooray/wine-mozart/releases/download/v0.0.2/wine-mozart-11.0-x86_64.tar.xz";
       sha256 = "a2cfb27f795fb714f98cb9fdb058e41359f942a179644a7a4cec0f616320f85d";
@@ -11,6 +11,12 @@ let
     mkdir -p "$out"
     tar -xJf "$src" --strip-components=1 -C "$out"
   '';
+
+  # Same runtime with ole32/winex11 rebuilt so file drags reach native apps.
+  flStudioWine = inputs.wine-native-dnd.lib.withOutgoingDnd {
+    inherit pkgs;
+    stockWine = flStudioWineStock;
+  };
 
   # Wine's /tmp socket must be shared across launches of the same prefix.
   flStudioRuntime = (pkgs.steam.override {

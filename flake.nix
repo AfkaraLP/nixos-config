@@ -15,6 +15,12 @@
 
     nixcord.url = "github:kaylorben/nixcord";
 
+    # Wine -> native file drags for FL Studio; local checkout until published.
+    wine-native-dnd = {
+      url = "git+file:///home/afkara/projects/wine-native-dnd?ref=worktree-dnd-bridge";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   }; # inputs
 
   outputs = { self, nixpkgs, home-manager, glide-browser, ... }@inputs:

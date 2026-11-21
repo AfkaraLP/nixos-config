@@ -131,9 +131,13 @@ in
             '')
         ];
         extraConfig = {
-          willsters-rage-at-handsfree-knows-no-rational-bounds = {
+          "10-bluez" = {
             "monitor.bluez.properties" = {
-              "override.bluez5.roles" = [
+              "bluez5.enable-sbc-xq" = true;
+              "bluez5.enable-msbc" = true;
+              "bluez5.enable-hw-volume" = true;
+              # Keep stereo playback available; call-only roles force CVSD mono.
+              "bluez5.roles" = [
                 "a2dp_sink"
                 "a2dp_source"
                 "bap_sink"
@@ -142,14 +146,6 @@ in
                 "hsp_ag"
                 "hfp_ag"
               ];
-            };
-          };
-          "10-bluez" = {
-            "monitor.bluez.properties" = {
-              "bluez5.enable-sbc-xq" = true;
-              "bluez5.enable-msbc" = true;
-              "bluez5.enable-hw-volume" = true;
-              "bluez5.roles" = [ "hsp_hs" "hsp_ag" "hfp_hf" "hfp_ag" ];
             };
           };
         };
@@ -188,6 +184,7 @@ in
       inputs.glide-browser.packages.x86_64-linux.default
       omp
       claude-code
+      gh
       usbutils
       iw
       tldr

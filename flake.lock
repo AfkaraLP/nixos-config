@@ -218,7 +218,8 @@
         "home-manager": "home-manager_2",
         "nixcord": "nixcord",
         "nixpkgs": "nixpkgs_3",
-        "spicetify-nix": "spicetify-nix"
+        "spicetify-nix": "spicetify-nix",
+        "wine-native-dnd": "wine-native-dnd"
       }
     },
     "spicetify-nix": {
@@ -274,6 +275,27 @@
         "owner": "numtide",
         "repo": "treefmt-nix",
         "type": "github"
+      }
+    },
+    "wine-native-dnd": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794584743,
+        "narHash": "sha256-cGMeRW3le5ksxCdRfVYx503XhkkEzvAVCzFjmNopFlo=",
+        "ref": "worktree-dnd-bridge",
+        "rev": "611469422b6901701ce599d52e9be25939e81daa",
+        "revCount": 12,
+        "type": "git",
+        "url": "file:///home/afkara/projects/wine-native-dnd"
+      },
+      "original": {
+        "ref": "worktree-dnd-bridge",
+        "type": "git",
+        "url": "file:///home/afkara/projects/wine-native-dnd"
       }
     }
   },

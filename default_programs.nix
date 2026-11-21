@@ -1,6 +1,9 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
+  # Hyprland with the X11 -> Wayland drag bridge (FL Studio drags to Discord).
+  imports = [ inputs.wine-native-dnd.nixosModules.default ];
+
   programs = {
     alvr = {
       enable = true;
